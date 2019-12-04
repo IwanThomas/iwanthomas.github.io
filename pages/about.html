@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Iwan's Blog | Articles by Iwan Thomas</title>
+    <title>Iwan's Blog | About</title>
     <link rel="shortcut icon" type="image/png" href="/favicon.png">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="/theme/css/screen.css" type="text/css" />
@@ -17,10 +17,8 @@
     <header>
         <nav>
             <ul>
-
-                <li class="ephemeral selected"><a href="/author/iwan-thomas.html">Iwan Thomas</a></li>
                 <li><a href="/">Home</a></li>
-                <li><a href="/pages/about.html">About</a></li>
+                <li class="selected"><a href="/pages/about.html">About</a></li>
             </ul>
         </nav>
         <div class="header_box">
@@ -28,16 +26,9 @@
         </div>
     </header>
     <div id="wrapper">
-        <div id="content">            <h4 class="date">Dec 03, 2019</h4>
-
-            <article class="post">
-                <h2 class="title">
-                    <a href="/casual-inference-paper-review.html" rel="bookmark" title="Permanent Link to &quot;Casual Inference Paper Review&quot;">Casual Inference Paper Review</a>
-                </h2>
-
-                
-                
-
+        <div id="content">
+            <div class="page">
+                <h1>About</h1>
                 <style type="text/css">/*!
 *
 * IPython notebook
@@ -1152,42 +1143,10 @@ h6:hover .anchor-link {
 .highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="A-Second-Chance-to-Get-Causal-Inference-Right:-A-Classification-of-Data-Science-Tasks">A Second Chance to Get Causal Inference Right: A Classification of Data Science Tasks<a class="anchor-link" href="#A-Second-Chance-to-Get-Causal-Inference-Right:-A-Classification-of-Data-Science-Tasks">&#182;</a></h3><p>This blog post consists of a review of the paper <em><a href="https://amstat.tandfonline.com/doi/full/10.1080/09332480.2019.1579578#.XaH9yedKjRb">A Second Chance to Get Causal Inference Right: A Classification of Data Science Tasks</a></em> by Miguel A. Hernán, John Hsu &amp; Brian Healy. The paper contains a number of points that are very applicable for data scientists working in industry.</p>
-<p>Here are the top ones that stuck out to me.</p>
-<ul>
-<li><p><strong>A Classification of Data Science Tasks:</strong> Data Scientists often describe their role as gaining insights from data. This is a vague and ambiguous description. The authors put forward a categorisation which splits data science into three main tasks:</p>
-<ul>
-<li><strong>Description</strong> consists of providing a quantitative summary of something in the world. It can range from something as simple as calculating means to developing clever data visualizations.</li>
-<li><strong>Prediction</strong> is the process of mapping a set of inputs to a set of outputs. The methods utilised in this area of data science can range from associations between variables to complex machine learning methods.</li>
-<li><strong>Counterfactual prediction</strong> is the process of predicting what would have happened, if the world had been different - it's answering "what if?" questions. This understanding can be used to perform causal inference work. Methods utilised here include randomized experiments to techniques that aim to learn from observational data.<ul>
-<li>The authors point out how some people misleadingly refer to causal inference as explanation. A randomized experiment may tell you there is some causal difference between two variants, but doesn't <em>explain</em> why that difference exists.</li>
-</ul>
-</li>
-</ul>
-<p>What does this make data science? In the words of the authors,</p>
-<blockquote><p>Data science is the discipline that describes, predicts, and makes causal inferences (or, more generally, counterfactual predictions), not the discipline that uses machine learning algorithms or other technical tools.</p>
-</blockquote>
-<p>Building on this classification, the authors develop a number of ideas, detailed below.</p>
-</li>
-</ul>
-<ul>
-<li><p><strong>Our Role as Data Scientists:</strong> Within Deliveroo, where I currently work, there are three disciplines of data science - they are analytics, algorithms and causal inference. As you can see, these nicely map on to the classification above.  The authors provide a fantastic description of the role of an inference data scientist.</p>
-<p>It's a three-step process. First, we articulate a question in such a way that the target experiment we'd eventually like to run is clear. At Deliveroo, a suitable question might be "Does the restaurant chosen for a customer’s first order impact their retention?", with a follow-up experiment looking to exploit some characteristic of restaurants found to lead to higher retention. Second, we use observational data to provide evidence that this is indeed a good question to explore. This might consist of examining correlation plots, partial correlation plots and associative models to understand the relationship between our variables before using some causal inference techniques to ascertain whether the relationship is causal. Finally, having asked a good question which naturally leads to a target experiment, and gathered evidence that this is an area worthy of exploration, we run an experiment. The authors provide an example of this process in action:</p>
-<blockquote><p>For example, to compare the mortality under various epoetin dosing strategies in patients with renal failure, students use subject-matter knowledge to 1) outline the design of the hypothetical randomized experiment that would estimate the causal effect of interest - the target trial, 2) identify an observational database with sufficient information to approximately emulate the target trial and 3) emulate the target trial and therefore estimate the causal effect of interest using the observational database.</p>
-</blockquote>
-<p>A natural follow-up question is what type of questions we should ask. Should we ask big and broad questions or smaller, narrower questions? For example, instead of asking "What characteristics of a deal lead to a user converting?", why not use our domain knowledge to narrow in on a specific element and ask a question such as "What is the impact of ratings, or a certain badge on conversion?" Chipping away at the problem by asking smaller, more specific questions is probably more fruitful to trying to understand the whole picture in one.</p>
-</li>
-</ul>
-<ul>
-<li><p><strong>Prediction vs Causal Inference:</strong> Prediction and causal inference are two separate things and "the premise that predictive algorithms will lead to better decisions is questionable". The authors give the example of how a prior hospitalization may be a good predictor of mortality, but nobody would suggest that we stop admitting patients to hospital to reduce mortality. Understanding what may be predictive of a hospitalization, and then understanding what may be done to prevent that are two different questions. In their words, "predictive algorithms inform us that decisions have to be made, but they cannot help us make the decisions."</p>
-<p>It's important to bear this distinction in mind, as it influences the approach taken to a problem. In the past, I've developed predictive models to understand whether a deal is likely to be clicked or whether a user is likely to churn. When the piece wraps up and it comes time to recommend a course of action, it's hard to use that same piece of analysis to identify the best course of action forward.</p>
-<p>Increasingly, I believe there's a better way of approaching this problem, and it closely follows the methodology described above. It begins by thinking carefully about the relationship in question - as an aside, I've been working through <a href="https://www.youtube.com/playlist?list=PLwJRxp3blEvZyQBTTOMFRP_TDaSdly3gU">Ben Lambert's excellent YouTube Econometrics Course</a> and have been impressed by the level of thought that goes into specifying a regression. You think carefully about the data generating process, about the assumptions that must be honoured to produce unbiased and correct estimates. This thoughtfulness can sometimes be lost when plugging in a collection of variables into some predictive algorithm. After thinking carefully about this, you produce some estimate of the associative relationship between your variables of interest. The final step then is to attempt to establish some degree of causality from this observational data.</p>
-</li>
-</ul>
-<ul>
-<li><strong>"Let the data speak for itself:"</strong> A key goal of data science is to help make better decisions. And to do that, we must take our work and craft actionable recommendations that can be used by the business. For inference work, this normally entails going beyond just an associative relationship to something that tries to understand the drivers of a given relationship. Often, analysts stop short of deeming a certain relationship as causal and strongly caveat their work. I believe that it's better to go one step further. We should convince our audience (and ourselves) that we have thought through the problem carefully and have considered how to endow these numerical estimates with meaning. If we don't, we simply let our stakeholders imbue them with the meaning they'd like them to have. Doing this final step leads to stronger and more actionable recommendations.</li>
-</ul>
-<p>All in all, I thought this was a fantastic paper, and would highly recommend you read it.</p>
+<h3 id="About">About<a class="anchor-link" href="#About">&#182;</a></h3><p>Hello and welcome to my blog!</p>
+<p>I’m a Data Scientist at Deliveroo, and this blog is intended to capture some of my thoughts about data science.</p>
+<p>All views are my own and do not reflect those of my employers.</p>
+<p>You can find me on LinkedIn <a href="https://www.linkedin.com/in/iwan-thomas-1413a1a3/">here</a></p>
 
 </div>
 </div>
@@ -1224,16 +1183,7 @@ h6:hover .anchor-link {
 }
 </script>
 
-                <div class="clear"></div>
-
-                <div class="info">
-                    <a href="/casual-inference-paper-review.html">posted at 00:00</a>
-                    &nbsp;&middot;&nbsp;<a href="/category/experimentation.html" rel="tag">Experimentation</a>
-                    &nbsp;&middot;
-                    &nbsp;<a href="/tag/experimentation.html" class="tags">Experimentation</a>
-                    &nbsp;<a href="/tag/paper-review.html" class="tags">Paper Review</a>
-                </div>
-            </article>
+            </div>
 
             <div class="clear"></div>
             <footer>
