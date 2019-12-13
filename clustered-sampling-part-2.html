@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Iwan's Blog | Clustered Sampling Part 2</title>
+    <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/theme/css/screen.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/print.css" type="text/css" media="print" />
+    <meta name="generator" content="Pelican" />
+    <meta name="description" content="" />
+    <meta name="author" content="Iwan Thomas" />
+
+    <meta name="keywords" content="Experimentation" />
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/pages/about.html">About</a></li>
+            </ul>
+        </nav>
+        <div class="header_box">
+            <h1><a href="/">Iwan's Blog</a></h1>
+        </div>
+    </header>
+    <div id="wrapper">
+        <div id="content">            <h4 class="date">Dec 13, 2019</h4>
+
+            <article class="post">
+                <h2 class="title">
+                    <a href="/clustered-sampling-part-2.html" rel="bookmark" title="Permanent Link to &quot;Clustered Sampling Part 2&quot;">Clustered Sampling Part 2</a>
+                </h2>
+
+                
+                
+
+                <style type="text/css">/*!
+*
+* IPython notebook
+*
+*/
+/* CSS font colors for translated ANSI escape sequences */
+/* The color values are a mix of
+   http://www.xcolors.net/dl/baskerville-ivorylight and
+   http://www.xcolors.net/dl/euphrasia */
+.ansi-black-fg {
+  color: #3E424D;
+}
+.ansi-black-bg {
+  background-color: #3E424D;
+}
+.ansi-black-intense-fg {
+  color: #282C36;
+}
+.ansi-black-intense-bg {
+  background-color: #282C36;
+}
+.ansi-red-fg {
+  color: #E75C58;
+}
+.ansi-red-bg {
+  background-color: #E75C58;
+}
+.ansi-red-intense-fg {
+  color: #B22B31;
+}
+.ansi-red-intense-bg {
+  background-color: #B22B31;
+}
+.ansi-green-fg {
+  color: #00A250;
+}
+.ansi-green-bg {
+  background-color: #00A250;
+}
+.ansi-green-intense-fg {
+  color: #007427;
+}
+.ansi-green-intense-bg {
+  background-color: #007427;
+}
+.ansi-yellow-fg {
+  color: #DDB62B;
+}
+.ansi-yellow-bg {
+  background-color: #DDB62B;
+}
+.ansi-yellow-intense-fg {
+  color: #B27D12;
+}
+.ansi-yellow-intense-bg {
+  background-color: #B27D12;
+}
+.ansi-blue-fg {
+  color: #208FFB;
+}
+.ansi-blue-bg {
+  background-color: #208FFB;
+}
+.ansi-blue-intense-fg {
+  color: #0065CA;
+}
+.ansi-blue-intense-bg {
+  background-color: #0065CA;
+}
+.ansi-magenta-fg {
+  color: #D160C4;
+}
+.ansi-magenta-bg {
+  background-color: #D160C4;
+}
+.ansi-magenta-intense-fg {
+  color: #A03196;
+}
+.ansi-magenta-intense-bg {
+  background-color: #A03196;
+}
+.ansi-cyan-fg {
+  color: #60C6C8;
+}
+.ansi-cyan-bg {
+  background-color: #60C6C8;
+}
+.ansi-cyan-intense-fg {
+  color: #258F8F;
+}
+.ansi-cyan-intense-bg {
+  background-color: #258F8F;
+}
+.ansi-white-fg {
+  color: #C5C1B4;
+}
+.ansi-white-bg {
+  background-color: #C5C1B4;
+}
+.ansi-white-intense-fg {
+  color: #A1A6B2;
+}
+.ansi-white-intense-bg {
+  background-color: #A1A6B2;
+}
+.ansi-default-inverse-fg {
+  color: #FFFFFF;
+}
+.ansi-default-inverse-bg {
+  background-color: #000000;
+}
+.ansi-bold {
+  font-weight: bold;
+}
+.ansi-underline {
+  text-decoration: underline;
+}
+/* The following styles are deprecated an will be removed in a future version */
+.ansibold {
+  font-weight: bold;
+}
+.ansi-inverse {
+  outline: 0.5px dotted;
+}
+/* use dark versions for foreground, to improve visibility */
+.ansiblack {
+  color: black;
+}
+.ansired {
+  color: darkred;
+}
+.ansigreen {
+  color: darkgreen;
+}
+.ansiyellow {
+  color: #c4a000;
+}
+.ansiblue {
+  color: darkblue;
+}
+.ansipurple {
+  color: darkviolet;
+}
+.ansicyan {
+  color: steelblue;
+}
+.ansigray {
+  color: gray;
+}
+/* and light for background, for the same reason */
+.ansibgblack {
+  background-color: black;
+}
+.ansibgred {
+  background-color: red;
+}
+.ansibggreen {
+  background-color: green;
+}
+.ansibgyellow {
+  background-color: yellow;
+}
+.ansibgblue {
+  background-color: blue;
+}
+.ansibgpurple {
+  background-color: magenta;
+}
+.ansibgcyan {
+  background-color: cyan;
+}
+.ansibggray {
+  background-color: gray;
+}
+div.cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  width: 100%;
+  padding: 5px;
+  /* This acts as a spacer between cells, that is outside the border */
+  margin: 0px;
+  outline: none;
+  position: relative;
+  overflow: visible;
+}
+div.cell:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: transparent;
+}
+div.cell.jupyter-soft-selected {
+  border-left-color: #E3F2FD;
+  border-left-width: 1px;
+  padding-left: 5px;
+  border-right-color: #E3F2FD;
+  border-right-width: 1px;
+  background: #E3F2FD;
+}
+@media print {
+  div.cell.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+div.cell.selected,
+div.cell.selected.jupyter-soft-selected {
+  border-color: #ababab;
+}
+div.cell.selected:before,
+div.cell.selected.jupyter-soft-selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #42A5F5;
+}
+@media print {
+  div.cell.selected,
+  div.cell.selected.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+.edit_mode div.cell.selected {
+  border-color: #66BB6A;
+}
+.edit_mode div.cell.selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #66BB6A;
+}
+@media print {
+  .edit_mode div.cell.selected {
+    border-color: transparent;
+  }
+}
+.prompt {
+  /* This needs to be wide enough for 3 digit prompt numbers: In[100]: */
+  min-width: 14ex;
+  /* This padding is tuned to match the padding on the CodeMirror editor. */
+  padding: 0.4em;
+  margin: 0px;
+  font-family: monospace;
+  text-align: right;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+  /* Don't highlight prompt number selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Use default cursor */
+  cursor: default;
+}
+@media (max-width: 540px) {
+  .prompt {
+    text-align: left;
+  }
+}
+div.inner_cell {
+  min-width: 0;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_area {
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
+  background: #f7f7f7;
+  line-height: 1.21429em;
+}
+/* This is needed so that empty prompt areas can collapse to zero height when there
+   is no content in the output_subarea and the prompt. The main purpose of this is
+   to make sure that empty JavaScript output_subareas have no height. */
+div.prompt:empty {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+div.unrecognized_cell {
+  padding: 5px 5px 5px 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.unrecognized_cell .inner_cell {
+  border-radius: 2px;
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+  border: 1px solid #cfcfcf;
+  background: #eaeaea;
+}
+div.unrecognized_cell .inner_cell a {
+  color: inherit;
+  text-decoration: none;
+}
+div.unrecognized_cell .inner_cell a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+@media (max-width: 540px) {
+  div.unrecognized_cell > div.prompt {
+    display: none;
+  }
+}
+div.code_cell {
+  /* avoid page breaking on code cells when printing */
+}
+@media print {
+  div.code_cell {
+    page-break-inside: avoid;
+  }
+}
+/* any special styling for code cells that are currently running goes here */
+div.input {
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.input {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_prompt {
+  color: #303F9F;
+  border-top: 1px solid transparent;
+}
+div.input_area > div.highlight {
+  margin: 0.4em;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+div.input_area > div.highlight > pre {
+  margin: 0px;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+/* The following gets added to the <head> if it is detected that the user has a
+ * monospace font with inconsistent normal/bold/italic height.  See
+ * notebookmain.js.  Such fonts will have keywords vertically offset with
+ * respect to the rest of the text.  The user should select a better font.
+ * See: https://github.com/ipython/ipython/issues/1503
+ *
+ * .CodeMirror span {
+ *      vertical-align: bottom;
+ * }
+ */
+.CodeMirror {
+  line-height: 1.21429em;
+  /* Changed from 1em to our global default */
+  font-size: 14px;
+  height: auto;
+  /* Changed to auto to autogrow */
+  background: none;
+  /* Changed from white to allow our bg to show through */
+}
+.CodeMirror-scroll {
+  /*  The CodeMirror docs are a bit fuzzy on if overflow-y should be hidden or visible.*/
+  /*  We have found that if it is visible, vertical scrollbars appear with font size changes.*/
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.CodeMirror-lines {
+  /* In CM2, this used to be 0.4em, but in CM3 it went to 4px. We need the em value because */
+  /* we have set a different line-height and want this to scale with that. */
+  /* Note that this should set vertical padding only, since CodeMirror assumes
+       that horizontal padding will be set on CodeMirror pre */
+  padding: 0.4em 0;
+}
+.CodeMirror-linenumber {
+  padding: 0 8px 0 4px;
+}
+.CodeMirror-gutters {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.CodeMirror pre {
+  /* In CM3 this went to 4px from 0 in CM2. This sets horizontal padding only,
+    use .CodeMirror-lines for vertical */
+  padding: 0 0.4em;
+  border: 0;
+  border-radius: 0;
+}
+.CodeMirror-cursor {
+  border-left: 1.4px solid black;
+}
+@media screen and (min-width: 2138px) and (max-width: 4319px) {
+  .CodeMirror-cursor {
+    border-left: 2px solid black;
+  }
+}
+@media screen and (min-width: 4320px) {
+  .CodeMirror-cursor {
+    border-left: 4px solid black;
+  }
+}
+/*
+
+Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Org>
+Adapted from GitHub theme
+
+*/
+.highlight-base {
+  color: #000;
+}
+.highlight-variable {
+  color: #000;
+}
+.highlight-variable-2 {
+  color: #1a1a1a;
+}
+.highlight-variable-3 {
+  color: #333333;
+}
+.highlight-string {
+  color: #BA2121;
+}
+.highlight-comment {
+  color: #408080;
+  font-style: italic;
+}
+.highlight-number {
+  color: #080;
+}
+.highlight-atom {
+  color: #88F;
+}
+.highlight-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.highlight-builtin {
+  color: #008000;
+}
+.highlight-error {
+  color: #f00;
+}
+.highlight-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.highlight-meta {
+  color: #AA22FF;
+}
+/* previously not defined, copying from default codemirror */
+.highlight-def {
+  color: #00f;
+}
+.highlight-string-2 {
+  color: #f50;
+}
+.highlight-qualifier {
+  color: #555;
+}
+.highlight-bracket {
+  color: #997;
+}
+.highlight-tag {
+  color: #170;
+}
+.highlight-attribute {
+  color: #00c;
+}
+.highlight-header {
+  color: blue;
+}
+.highlight-quote {
+  color: #090;
+}
+.highlight-link {
+  color: #00c;
+}
+/* apply the same style to codemirror */
+.cm-s-ipython span.cm-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-atom {
+  color: #88F;
+}
+.cm-s-ipython span.cm-number {
+  color: #080;
+}
+.cm-s-ipython span.cm-def {
+  color: #00f;
+}
+.cm-s-ipython span.cm-variable {
+  color: #000;
+}
+.cm-s-ipython span.cm-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-variable-2 {
+  color: #1a1a1a;
+}
+.cm-s-ipython span.cm-variable-3 {
+  color: #333333;
+}
+.cm-s-ipython span.cm-comment {
+  color: #408080;
+  font-style: italic;
+}
+.cm-s-ipython span.cm-string {
+  color: #BA2121;
+}
+.cm-s-ipython span.cm-string-2 {
+  color: #f50;
+}
+.cm-s-ipython span.cm-meta {
+  color: #AA22FF;
+}
+.cm-s-ipython span.cm-qualifier {
+  color: #555;
+}
+.cm-s-ipython span.cm-builtin {
+  color: #008000;
+}
+.cm-s-ipython span.cm-bracket {
+  color: #997;
+}
+.cm-s-ipython span.cm-tag {
+  color: #170;
+}
+.cm-s-ipython span.cm-attribute {
+  color: #00c;
+}
+.cm-s-ipython span.cm-header {
+  color: blue;
+}
+.cm-s-ipython span.cm-quote {
+  color: #090;
+}
+.cm-s-ipython span.cm-link {
+  color: #00c;
+}
+.cm-s-ipython span.cm-error {
+  color: #f00;
+}
+.cm-s-ipython span.cm-tab {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAAXNSR0IArs4c6QAAAGFJREFUSMft1LsRQFAQheHPowAKoACx3IgEKtaEHujDjORSgWTH/ZOdnZOcM/sgk/kFFWY0qV8foQwS4MKBCS3qR6ixBJvElOobYAtivseIE120FaowJPN75GMu8j/LfMwNjh4HUpwg4LUAAAAASUVORK5CYII=);
+  background-position: right;
+  background-repeat: no-repeat;
+}
+div.output_wrapper {
+  /* this position must be relative to enable descendents to be absolute within it */
+  position: relative;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 1;
+}
+/* class for the output area when it should be height-limited */
+div.output_scroll {
+  /* ideally, this would be max-height, but FF barfs all over that */
+  height: 24em;
+  /* FF needs this *and the wrapper* to specify full width, or it will shrinkwrap */
+  width: 100%;
+  overflow: auto;
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  display: block;
+}
+/* output div while it is collapsed */
+div.output_collapsed {
+  margin: 0px;
+  padding: 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+div.out_prompt_overlay {
+  height: 100%;
+  padding: 0px 0.4em;
+  position: absolute;
+  border-radius: 2px;
+}
+div.out_prompt_overlay:hover {
+  /* use inner shadow to get border that is computed the same on WebKit/FF */
+  -webkit-box-shadow: inset 0 0 1px #000;
+  box-shadow: inset 0 0 1px #000;
+  background: rgba(240, 240, 240, 0.5);
+}
+div.output_prompt {
+  color: #D84315;
+}
+/* This class is the outer container of all output sections. */
+div.output_area {
+  padding: 0px;
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.output_area .MathJax_Display {
+  text-align: left !important;
+}
+div.output_area 
+div.output_area 
+div.output_area img,
+div.output_area svg {
+  max-width: 100%;
+  height: auto;
+}
+div.output_area img.unconfined,
+div.output_area svg.unconfined {
+  max-width: none;
+}
+div.output_area .mglyph > img {
+  max-width: none;
+}
+/* This is needed to protect the pre formating from global settings such
+   as that of bootstrap */
+.output {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.output_area {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+div.output_area pre {
+  margin: 0;
+  padding: 1px 0 1px 0;
+  border: 0;
+  vertical-align: baseline;
+  color: black;
+  background-color: transparent;
+  border-radius: 0;
+}
+/* This class is for the output subarea inside the output_area and after
+   the prompt div. */
+div.output_subarea {
+  overflow-x: auto;
+  padding: 0.4em;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+  max-width: calc(100% - 14ex);
+}
+div.output_scroll div.output_subarea {
+  overflow-x: visible;
+}
+/* The rest of the output_* classes are for special styling of the different
+   output types */
+/* all text output has this class: */
+div.output_text {
+  text-align: left;
+  color: #000;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+}
+/* stdout/stderr are 'text' as well as 'stream', but execute_result/error are *not* streams */
+div.output_stderr {
+  background: #fdd;
+  /* very light red background for stderr */
+}
+div.output_latex {
+  text-align: left;
+}
+/* Empty output_javascript divs should have no height */
+div.output_javascript:empty {
+  padding: 0;
+}
+.js-error {
+  color: darkred;
+}
+/* raw_input styles */
+div.raw_input_container {
+  line-height: 1.21429em;
+  padding-top: 5px;
+}
+pre.raw_input_prompt {
+  /* nothing needed here. */
+}
+input.raw_input {
+  font-family: monospace;
+  font-size: inherit;
+  color: inherit;
+  width: auto;
+  /* make sure input baseline aligns with prompt */
+  vertical-align: baseline;
+  /* padding + margin = 0.5em between prompt and cursor */
+  padding: 0em 0.25em;
+  margin: 0em 0.25em;
+}
+input.raw_input:focus {
+  box-shadow: none;
+}
+p.p-space {
+  margin-bottom: 10px;
+}
+div.output_unrecognized {
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+}
+div.output_unrecognized a {
+  color: inherit;
+  text-decoration: none;
+}
+div.output_unrecognized a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+.rendered_html {
+  color: #000;
+  /* any extras will just be numbers: */
+}
+
+
+
+.rendered_html :link {
+  text-decoration: underline;
+}
+.rendered_html :visited {
+  text-decoration: underline;
+}
+
+
+
+
+
+
+.rendered_html h1:first-child {
+  margin-top: 0.538em;
+}
+.rendered_html h2:first-child {
+  margin-top: 0.636em;
+}
+.rendered_html h3:first-child {
+  margin-top: 0.777em;
+}
+.rendered_html h4:first-child {
+  margin-top: 1em;
+}
+.rendered_html h5:first-child {
+  margin-top: 1em;
+}
+.rendered_html h6:first-child {
+  margin-top: 1em;
+}
+.rendered_html ul:not(.list-inline),
+.rendered_html ol:not(.list-inline) {
+  padding-left: 2em;
+}
+
+
+
+
+
+
+
+
+.rendered_html * + ul {
+  margin-top: 1em;
+}
+.rendered_html * + ol {
+  margin-top: 1em;
+}
+
+
+
+
+
+.rendered_html pre,
+
+
+
+
+.rendered_html tr,
+.rendered_html th,
+
+
+.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+.rendered_html * + table {
+  margin-top: 1em;
+}
+
+.rendered_html * + p {
+  margin-top: 1em;
+}
+
+.rendered_html * + img {
+  margin-top: 1em;
+}
+.rendered_html img,
+
+.rendered_html img.unconfined,
+
+
+.rendered_html * + .alert {
+  margin-top: 1em;
+}
+[dir="rtl"] 
+div.text_cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.text_cell > div.prompt {
+    display: none;
+  }
+}
+div.text_cell_render {
+  /*font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;*/
+  outline: none;
+  resize: none;
+  width: inherit;
+  border-style: none;
+  padding: 0.5em 0.5em 0.5em 0.4em;
+  color: #000;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+a.anchor-link:link {
+  text-decoration: none;
+  padding: 0px 20px;
+  visibility: hidden;
+}
+h1:hover .anchor-link,
+h2:hover .anchor-link,
+h3:hover .anchor-link,
+h4:hover .anchor-link,
+h5:hover .anchor-link,
+h6:hover .anchor-link {
+  visibility: visible;
+}
+.text_cell.rendered .input_area {
+  display: none;
+}
+.text_cell.rendered 
+.text_cell.rendered .rendered_html tr,
+.text_cell.rendered .rendered_html th,
+.text_cell.rendered 
+.text_cell.unrendered .text_cell_render {
+  display: none;
+}
+.text_cell .dropzone .input_area {
+  border: 2px dashed #bababa;
+  margin: -1px;
+}
+.cm-header-1,
+.cm-header-2,
+.cm-header-3,
+.cm-header-4,
+.cm-header-5,
+.cm-header-6 {
+  font-weight: bold;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.cm-header-1 {
+  font-size: 185.7%;
+}
+.cm-header-2 {
+  font-size: 157.1%;
+}
+.cm-header-3 {
+  font-size: 128.6%;
+}
+.cm-header-4 {
+  font-size: 110%;
+}
+.cm-header-5 {
+  font-size: 100%;
+  font-style: italic;
+}
+.cm-header-6 {
+  font-size: 100%;
+  font-style: italic;
+}
+</style>
+<style type="text/css">.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Clustered-Sampling-Part-2">Clustered Sampling Part 2<a class="anchor-link" href="#Clustered-Sampling-Part-2">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h3><p>This is part two of a two-part blog series exploring clustered sampling. The first part explored how our inference may be complicated if the units of diversion and analysis differ. This second part will address how we can overcome this problem described to produce robust analysis. It consists of the following parts:</p>
+<ul>
+<li>Why we can use a regression instead of a t-test to analyse experiments.</li>
+<li>A derivation of the variance of $\hat{\beta}$ in the case of homoskedasticity and heteroskedasticity.</li>
+<li>A discussion of how the variance of $\hat{\beta}$ differs when we have clustered errors.</li>
+<li>Applications of cluster-robust regression.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="&#160;Regressions-vs-t-tests">&#160;Regressions vs t-tests<a class="anchor-link" href="#&#160;Regressions-vs-t-tests">&#182;</a></h3><p>In most introductions to A/B testing, experiment variants are compared using a t-test. In this post, we'll be using regression analysis which is an equivalent method of analysis. Regression is chosen because it lets us specify the appropriate covariance matrix (e.g. cluster robust) which are readily available in OLS statistical packages - more on this below.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="&#160;A-derivation-of-the-variance-of-$\hat{\beta}$-in-the-case-of-homoskedasticity-and-heteroskedasticity">&#160;A derivation of the variance of $\hat{\beta}$ in the case of homoskedasticity and heteroskedasticity<a class="anchor-link" href="#&#160;A-derivation-of-the-variance-of-$\hat{\beta}$-in-the-case-of-homoskedasticity-and-heteroskedasticity">&#182;</a></h3><p>Let's begin by deriving an expression of the variance of $\hat{\beta}$. Consider a data-generating process represented by the following regression, where $\alpha^{p}$ and $\beta^{p}$ denote the population parameters.</p>
+$$y_{i} = \alpha^{p} + \beta^{p}x_{i} + \epsilon_{i}$$<p>It can be <a href="https://are.berkeley.edu/courses/EEP118/current/derive_ols.pdf">shown</a> that  $\hat{\beta}$ is given by the expression</p>
+$$\hat{\beta} = \frac{\sum_{n=1}^{N} (x{_i} - \bar{x})(y{_i} - \bar{y})}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2}$$<p>which can be <a href="https://youtu.be/hGv9fnmlYaU">rearranged</a> as</p>
+$$\hat{\beta} = \frac{\sum_{n=1}^{N} (x{_i} - \bar{x})y{_i}}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2}$$<p>Substituting in our equation for $y_{i}$, we have</p>
+$$\hat{\beta} = \frac{\sum_{n=1}^{N} (x{_i} - \bar{x})(\alpha^{p} + \beta^{p}x_{i} + \epsilon_{i})}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2}$$$$\hat{\beta} = \frac{\sum_{n=1}^{N} (x{_i} - \bar{x})\alpha^{p} + (x{_i} - \bar{x})\beta^{p}x_{i} + (x{_i} - \bar{x})\epsilon_{i})}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2}$$<p>If we consider the first term, we have</p>
+$$\frac{\sum_{n=1}^{N} (x{_i} - \bar{x})\alpha^{p}}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2} = \frac{N\bar{x}\alpha^{p} - N\bar{x}\alpha^{p}}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2} = 0 $$<p>The second term becomes</p>
+$$\frac{\sum_{n=1}^{N} (x{_i} - \bar{x})\beta^{p}x_{i}}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2}$$<p>Using the same <a href="https://youtu.be/hGv9fnmlYaU">rearranging trick</a> as above, we can rearrange and simplify this expression</p>
+$$\frac{\sum_{n=1}^{N} (x{_i} - \bar{x})\beta^{p}(x{_i} - \bar{x})}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2} = \beta^{p}\frac{\sum_{n=1}^{N} (x{_i} - \bar{x})^2}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2} = \beta^{p} $$<p>We therefore have</p>
+$$\hat{\beta} = \beta^{p} + \frac{\sum_{n=1}^{N} (x{_i} - \bar{x})\epsilon_{i}}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2}$$<p>We can use this expression to find the variance of $\hat{\beta}$.</p>
+$$Var(\hat{\beta}) = Var(\beta^{p} + \frac{\sum_{n=1}^{N} (x{_i} - \bar{x})\epsilon_{i}}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2})$$<p>In general we have,</p>
+$$Var(X + Y) = Var(X) + Var(Y) + 2 Cov(X, Y)$$<p>As $\beta^{p}$ is just a constant, its variance and covariance will be zero. This means we can immediately simplify our expression for $Var(\hat{\beta})$ to</p>
+$$Var(\hat{\beta}) = Var(\frac{\sum_{n=1}^{N} (x{_i} - \bar{x})\epsilon_{i}}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2}) = Var(\frac{\sum_{n=1}^{N} (x{_i} - \bar{x})\epsilon_{i}}{SS_{x}})$$<p>where we have replaced our denominator with $SS_{x}$.</p>
+<p>We assume that our $x$ values are fixed under repeated draws - that is, that our values $x_{i}$ are not random variables. This means that all the variation that we see between draws can be attributed to our $\epsilon$ terms. With this assumption, we can treat $SS_{x}$ as a constant and bring it outside the variance operator. As $Var(aX) = a^2Var(X)$, we'll be squaring this term.</p>
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}Var(\sum_{n=1}^{N} (x{_i} - \bar{x})\epsilon_{i})$$<p>To further simplify this expression, let's write out the first few terms of the summation</p>
+$$\sum_{n=1}^{N} (x{_i} - \bar{x})\epsilon_{i} = (x{_1} - \bar{x})\epsilon_{1} + (x{_2} - \bar{x})\epsilon_{2} + ... + (x{_N} - \bar{x})\epsilon_{N}$$<p>To find the variance of this term, we must take the variance of each term and the covariance of each cross-term. We can simplify things by recalling the <a href="https://youtu.be/ti9h-Au8LQw">Gauss-Markov assumption of no serial correlation</a>, which states that</p>
+$$Cov(\epsilon_{i}\epsilon_{j}) = 0 \text{ if }  i \neq j $$<p>This allows us to ignore the covariance terms and therefore bring the variance operator inside the summation.</p>
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{n=1}^{N} Var((x{_i} - \bar{x})\epsilon_{i})$$<p>Once again treating $(x{_i} - \bar{x})$ as constant enables us to pull it outside the variance operator. Remembering to square it we have</p>
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{n=1}^{N} (x{_i} - \bar{x})^2Var(\epsilon_{i})$$<h4 id="Assuming-Homoskedasticity">Assuming Homoskedasticity<a class="anchor-link" href="#Assuming-Homoskedasticity">&#182;</a></h4><p>Under the assumption of homoskedasticity, $ Var(\epsilon_{i}) = \sigma^2$. That is, the variance of our error term is a constant that doesn't vary over $x_i$. Therefore</p>
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{n=1}^{N} (x{_i} - \bar{x})^2\sigma^2$$<p>Substituting back in for $SS_{x}$ and simplifying yields</p>
+$$Var(\hat{\beta}) = \frac{\sum_{n=1}^{N} (x{_i} - \bar{x})^2\sigma^2}{[\sum_{n=1}^{N} (x{_i} - \bar{x})^2]^2} = \frac{\sigma^2}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2}$$<p>As the population variance of the error term $\epsilon$ , $\sigma^2$, is typically unknown, we estimate it using the residual standard error</p>
+$$\hat{\sigma}^2 = \frac{1}{N-2}\sum_{n=1}^{N} \hat{u_i}^2$$<p>Substituting this in gives us our final answer</p>
+$$\hat{Var}(\hat{\beta}) = \frac{1}{(N-2)}\frac{\sum_{n=1}^{N} \hat{u_i}^2}{\sum_{n=1}^{N} (x{_i} - \bar{x})^2}$$<p>Note the hat on the variance term, as we're now using our sample to estimate the population variance.</p>
+<p>You may be slightly skeptical (as I was) of how the $\sigma^2$ term is simply replaced by our residual term $\hat{u_i}^2$. If the <a href="https://youtu.be/NjTpHS5xLP8">strict exogeneity assumption</a> has been honoured, then we have that $E[\epsilon | X] = 0$ or alternatively $Cov(\epsilon, X) = 0$. What this means is that knowing $X$ doesn't tell you anything about whether a given observation is above or below the population regression function - that is, there is no systematic bias in our regression. Whilst there are a number of issues that can lead to a violation of this assumption for observational data, in experimental settings this assumption is honoured. This is because we choose $X$ randomly so there can be no relationship between $\epsilon$ and $X$ - if we were to plot both terms against each other, we'd find no relationship, indicating that the covariance term is zero.</p>
+<p>An experiment forces $E[\epsilon | X] = 0$. In this situation, we <a href="https://youtu.be/pW5mEem1Pbw">can show that</a> $E[\hat{\epsilon}] = \epsilon$. As such the residual is a good approximation for the true error term $\epsilon$.</p>
+<h4 id="Assuming-Heteroskedasticity">Assuming Heteroskedasticity<a class="anchor-link" href="#Assuming-Heteroskedasticity">&#182;</a></h4><p>If we cannot make the assumption of homoskedasticity, then we can get to here</p>
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{n=1}^{N} (x{_i} - \bar{x})^2Var(\epsilon_{i})$$<p>but because our variance term isn't constant, we cannot cancel terms as above. We will therefore have</p>
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{n=1}^{N} (x{_i} - \bar{x})^2\sigma^2_{i}$$<p>which we can estimate using our residuals</p>
+$$\hat{Var}(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{n=1}^{N} (x{_i} - \bar{x})^2\hat{u_i}^2$$<p>This is known as our heteroskedasticity-robust variance estimator. The label <code>HC</code> refers to “heteroskedasticity-consistent”. This particular estimate for $\hat{Var}(\hat{\beta})$ is known as <code>HC0</code> as it's the baseline
+heteroskedasticity-consistent variance estimator. There are variations on this estimator known as <code>HC1</code>, <code>HC2</code> and <code>HC3</code> of which more detail can be found in chapter 4.14 of this <a href="https://www.ssc.wisc.edu/~bhansen/econometrics/Econometrics.pdf">textbook</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="A-discussion-of-how-the-variance-of-$\hat{\beta}$-differs-when-we-have-clustered-errors">A discussion of how the variance of $\hat{\beta}$ differs when we have clustered errors<a class="anchor-link" href="#A-discussion-of-how-the-variance-of-$\hat{\beta}$-differs-when-we-have-clustered-errors">&#182;</a></h3><p>To understand the differences in our expression for $Var(\hat{\beta})$, let's return to an expression we derived earlier above. We said that</p>
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}Var(\sum_{n=1}^{N} (x{_i} - \bar{x})\epsilon_{i})$$<p>and the first few terms of the summation were</p>
+$$\sum_{n=1}^{N} (x{_i} - \bar{x})\epsilon_{i} = (x{_1} - \bar{x})\epsilon_{1} + (x{_2} - \bar{x})\epsilon_{2} + ... + (x{_N} - \bar{x})\epsilon_{N}$$<p>In the case of homoskedastic and heteroskedastic errors, we used the Gauss-Markov assumption of no autocorrelation to remove the covariance terms from our sum. For clustered errors, we can no longer make this assumption as we assume that within clusters the observations and errors are correlated.</p>
+<p>We can write out the expression above as</p>
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{i=1}^{N}\sum_{j=1}^{N} Cov[(x{_i} - \bar{x})\epsilon_{i}(x{_j} - \bar{x})\epsilon_{j}]$$<p>Pulling the terms $(x{_i} - \bar{x})$ and $(x{_j} - \bar{x})$ outside of the $Cov$ operator (by again assuming that our values $x_i$ are non-stochastic), we have</p>
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{i=1}^{N}\sum_{j=1}^{N} (x{_i} - \bar{x})(x{_j} - \bar{x}) Cov[\epsilon_{i}\epsilon_{j}]$$<p>By definition,</p>
+$$Cov[\epsilon_{i}\epsilon_{j}] = E[(\epsilon_{i} - E[\epsilon_{i}])(\epsilon_{j} - E[\epsilon_{j}])] = E[\epsilon_{i}\epsilon_{j}]$$<p>as we assume that our errors are white noise and therefore $E[\epsilon_{i}] = E[\epsilon_{j}] = 0$. This gives us:
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{i=1}^{N}\sum_{j=1}^{N} (x{_i} - \bar{x})(x{_j} - \bar{x}) E[\epsilon_{i}\epsilon_{j}]$$</p>
+<p>As $E[\epsilon_{i}] = E[\epsilon_{j}] = 0$, $E[\epsilon_{i}\epsilon_{j}] = Cov(\epsilon_{i}, \epsilon_{j})$. We previously used the Gauss-Markov assumption of no serial correlation to remove our covariance terms. For clustered errors, this covariance term is assumed to be zero unless two observations are in the same cluster. We therefore have $E[\epsilon_{i}\epsilon_{j}] = 0$ unless the observations i, j come from the same cluster.</p>
+<p>That allows us to obtain our expression for our variance estimator in the presence of clustered errors.</p>
+$$Var(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{i=1}^{N}\sum_{j=1}^{N} (x{_i} - \bar{x})(x{_j} - \bar{x}) E[\epsilon_{i}\epsilon_{j}]\delta{ij}$$<p>where</p>
+$$\delta{ij} = \{\begin{array}{l l} 1  \text{ if i and j are in the same cluster} \\ 0 \text{ otherwise} \\ \end{array}$$<p>We use our residuals to find our final expression</p>
+$$\hat{Var}(\hat{\beta}) = \frac{1}{{SS_{x}^2}}\sum_{i=1}^{N}\sum_{j=1}^{N} (x{_i} - \bar{x})(x{_j} - \bar{x}) \hat{u}_{i}\hat{u}_{j}\delta{ij}$$<p>This is our heteroskedasticity-robust, cluster-robust variance estimator. There's a few properties that we can observe about our estimator:</p>
+<ul>
+<li>First, in the case where we have one observation per cluster, our expression for $V_{clustered}$ simplifies to $V_{het}$.</li>
+<li>Two, the more correlated our error terms $\hat{u}_{i}$ and $\hat{u}_{j}$ the larger our standard error. Over the $j$ points in our cluster, a group of observations with a highly correlated error will sum to some positive or negative number, whereas a set of unrelated points will average out to zero. </li>
+<li>Three, our standard error will be higher if our observations $(x{_i} - \bar{x})$ and $(x{_j} - \bar{x})$ are correlated.</li>
+</ul>
+<p>We can see from the expression above that our standard errors will be inflated in the presence of clustered observations. And this makes sense - an additional observation from the same cluster no longer provides a completely independent piece of information. As such we should be more doubtful in the conclusions we draw.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="How-this-idea-is-applied-in-practice">How this idea is applied in practice<a class="anchor-link" href="#How-this-idea-is-applied-in-practice">&#182;</a></h3><p>We began this blog post with a simulated example that explored how our inference may be complicated if the units of analysis and the units of diversion differ for a given experiment. This second part has explored some theory that can help us account for this experimental setup.</p>
+<p>Coming back to our example of randomising on some user identifier and reporting the impact on the metric CS contacts per order, we can think of a user as a cluster and each order an observation within that cluster. By correctly accounting for this in our regression, we should be able to avoid the excessively high false positive rate we observed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.mlab</span> <span class="k">as</span> <span class="nn">mlab</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">from</span> <span class="nn">statsmodels.regression.linear_model</span> <span class="k">import</span> <span class="n">OLS</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># suppress future warning</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Get the same functions as we previously used in part 1</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">generate_data</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Randomly generate data</span>
+<span class="sd">    </span>
+<span class="sd">    n: number of users</span>
+<span class="sd">    mu: parameterizes number of orders placed</span>
+<span class="sd">    p: parameterizes number of cs contacts made</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">rands_array</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="c1"># random key for each user</span>
+    <span class="n">orders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cs_contacts</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># for each user, generate a random number of orders and CS contacts</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">user_id</span><span class="p">:</span>
+        <span class="n">num_orders</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">poisson</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+        <span class="n">user_orders</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">num_orders</span><span class="p">)</span>
+        <span class="n">user_cs_contacts</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">bernoulli</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">num_orders</span><span class="p">)</span>
+        
+        <span class="n">orders</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orders</span><span class="p">,</span> <span class="n">user_orders</span><span class="p">)</span>
+        <span class="n">cs_contacts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cs_contacts</span><span class="p">,</span> <span class="n">user_cs_contacts</span><span class="p">)</span>
+
+    <span class="c1"># return a DataFrame</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">orders</span><span class="p">,</span> <span class="n">cs_contacts</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;userid&#39;</span><span class="p">,</span> <span class="s1">&#39;cs_contacts&#39;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;cs_contacts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;cs_contacts&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="k">def</span> <span class="nf">transform_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">user_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;userid&#39;</span><span class="p">)[</span><span class="s1">&#39;cs_contacts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;sum&#39;</span><span class="p">])</span>
+    <span class="n">user_data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;orders&#39;</span><span class="p">,</span> <span class="s1">&#39;cs_contacts&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">user_data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">create_dataset</span><span class="p">():</span>
+    <span class="c1"># create dataset</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3750</span><span class="p">,</span> <span class="mi">4500</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
+    <span class="n">mus</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span>
+    <span class="n">p_values</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">]</span>
+
+    <span class="n">orders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">mus</span><span class="p">,</span> <span class="n">p_values</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">generate_data</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span>
+        <span class="n">orders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="n">df_orders</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">orders</span><span class="p">)</span>
+    <span class="n">df_orders</span><span class="p">[</span><span class="s1">&#39;order_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_orders</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">df_orders</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Let's-create-a-number-of-datasets-that-simulate-an-A/A-test">Let's create a number of datasets that simulate an A/A test<a class="anchor-link" href="#Let's-create-a-number-of-datasets-that-simulate-an-A/A-test">&#182;</a></h4><p>For each one, we'll analyse the A/A test using i) a standard regression and ii) a cluster-robust regression and compare the FPR for both methods.</p>
+<p>Note how using a regression enables us to easily specify a cluster robust error structure as an argument. For the clustered error regression, we write:</p>
+
+<pre><code>OLS(Y,X).fit(cov_type='cluster', cov_kwds={'groups': df_orders['userid']})</code></pre>
+<p>We are telling the regression that orders from the same <code>userid</code> are in the same cluster - it will use this information to calculate the variance of our $\beta$ term.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">reg</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">clustered</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">nsims</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsims</span><span class="p">):</span>
+    
+    <span class="c1"># create dataset</span>
+    <span class="n">df_orders</span> <span class="o">=</span> <span class="n">create_dataset</span><span class="p">()</span>
+
+    <span class="c1"># randomly assign observations to users</span>
+    <span class="n">df_users</span> <span class="o">=</span> <span class="n">transform_data</span><span class="p">(</span><span class="n">df_orders</span><span class="p">)</span>
+    <span class="n">df_users</span><span class="p">[</span><span class="s1">&#39;cohort&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_users</span><span class="p">),</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+    
+    <span class="c1"># join back on to df_orders to get order-level dataset</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_orders</span><span class="p">,</span> <span class="n">df_users</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;userid&#39;</span><span class="p">)</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[[</span><span class="s1">&#39;userid&#39;</span><span class="p">,</span> <span class="s1">&#39;cs_contacts_x&#39;</span><span class="p">,</span> <span class="s1">&#39;order_id&#39;</span><span class="p">,</span> <span class="s1">&#39;cohort&#39;</span><span class="p">]]</span>
+    <span class="n">merged</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;userid&#39;</span><span class="p">,</span> <span class="s1">&#39;cs_contacts&#39;</span><span class="p">,</span> <span class="s1">&#39;order_id&#39;</span><span class="p">,</span> <span class="s1">&#39;cohort&#39;</span><span class="p">]</span>
+    
+    <span class="c1"># fit a regression</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">merged</span><span class="o">.</span><span class="n">cohort</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;cs_contacts&#39;</span><span class="p">]</span>
+    
+    <span class="c1"># get results</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">ci_lower</span><span class="p">,</span> <span class="n">ci_upper</span>  <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;cohort&#39;</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">param_estim</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;cohort&#39;</span><span class="p">]</span>
+    <span class="n">pval</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">pvalues</span><span class="p">[</span><span class="s1">&#39;cohort&#39;</span><span class="p">]</span>
+    <span class="n">reg</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ci_lower</span><span class="p">,</span> <span class="n">ci_upper</span><span class="p">,</span> <span class="n">param_estim</span><span class="p">,</span> <span class="n">pval</span><span class="p">])</span>
+    
+    <span class="n">results</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;cluster&#39;</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;groups&#39;</span><span class="p">:</span> <span class="n">df_orders</span><span class="p">[</span><span class="s1">&#39;userid&#39;</span><span class="p">]})</span>
+    <span class="n">ci_lower</span><span class="p">,</span> <span class="n">ci_upper</span>  <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;cohort&#39;</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">param_estim</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;cohort&#39;</span><span class="p">]</span>
+    <span class="n">pval</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">pvalues</span><span class="p">[</span><span class="s1">&#39;cohort&#39;</span><span class="p">]</span>
+    <span class="n">clustered</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ci_lower</span><span class="p">,</span> <span class="n">ci_upper</span><span class="p">,</span> <span class="n">param_estim</span><span class="p">,</span> <span class="n">pval</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can plot the confidence intervals for our 100 simulated experiments. As we've simulated an A/A test, we'd expect our $\beta$ term in the regression to be zero.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create DataFrames</span>
+<span class="n">df_clustered</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">clustered</span><span class="p">)</span>
+<span class="n">df_clustered</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ci_lower&#39;</span><span class="p">,</span> <span class="s1">&#39;ci_upper&#39;</span><span class="p">,</span> <span class="s1">&#39;point_estimate&#39;</span><span class="p">,</span> <span class="s1">&#39;pvalue&#39;</span><span class="p">]</span>
+<span class="n">df_clustered</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;clustered&#39;</span>
+
+<span class="n">df_reg</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">reg</span><span class="p">)</span>
+<span class="n">df_reg</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ci_lower&#39;</span><span class="p">,</span> <span class="s1">&#39;ci_upper&#39;</span><span class="p">,</span> <span class="s1">&#39;point_estimate&#39;</span><span class="p">,</span> <span class="s1">&#39;pvalue&#39;</span><span class="p">]</span>
+<span class="n">df_reg</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;regular&#39;</span>
+
+<span class="c1"># Sort and prepare DataFrames</span>
+<span class="n">df_clustered</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;point_estimate&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_clustered</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">df_reg</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;point_estimate&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_reg</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">titles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Confidence Intervals for Standard Regression&#39;</span><span class="p">,</span> 
+          <span class="s1">&#39;Confidence Intervals for Clustered Regression&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">[</span><span class="n">df_reg</span><span class="p">,</span> <span class="n">df_clustered</span><span class="p">],</span> <span class="n">titles</span><span class="p">):</span>
+
+    <span class="c1"># points</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ci_lower&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;ko&#39;</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ci_upper&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;ko&#39;</span><span class="p">)</span>
+
+    <span class="c1"># plot connecting line   </span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ci_lower&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ci_upper&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">pvals</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;pvalue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">x2</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> 
+                 <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span> <span class="k">if</span> <span class="n">pvals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.05</span> <span class="k">else</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+    <span class="c1"># draw vertical line at x = 0 to indicate true value of beta in A/A test</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+    
+    <span class="c1"># clean up and labelling</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span>
+    
+    <span class="c1"># plot FPR </span>
+    <span class="n">fpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;pvalue&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">fpr_patch</span> <span class="o">=</span> <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;FPR = </span><span class="si">{:.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fpr</span><span class="p">))</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="p">[</span><span class="n">fpr_patch</span><span class="p">])</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The figure above displays the confidence intervals associated with the simulated A/A tests.</p>
+<p>On the left hand side, we can see the results of a standard regression. By assuming no correlation between error terms (remember how we set all covariance terms to zero for the homoskedastic and heteroskedastic variance estimators), we have underestimated the standard error. The result is misleadingly narrow confidence intervals and a false positive rate that greatly exceeds the 0.05 alpha value. This plot shows that the impact that not controlling for clustered errors can have on inference.</p>
+<p>On the right hand side, we specify a regression that captures how our errors are correlated within a given cluster. The resulting standard error of our estimate is now larger, as it includes the covariance terms for observations within the same cluster. This is reflected in the width of the confidence intervals, which are bigger than those obtained from the standard regression shown on the left. As we've correctly captured the error structure, our false positive rate now closely matches the 0.05 alpha value.</p>
+<p>Note that in both cases our estimates are not biased, with our estimates $\hat{\beta}$ centred on the true $\beta$ value at 0.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h3><p>This blog post has examined the subtleties of drawing inferential conclusions from experiments that randomize on one unit but analyse on another. We have demonstrated how a cluster-robust regression correctly captures the error structure and allows us to produce robust analysis.</p>
+<p>Useful resources for cluster-robust inference:</p>
+<ul>
+<li><a href="http://cameron.econ.ucdavis.edu/research/Cameron_Miller_JHR_2015_February.pdf">A Practitioner’s Guide to Cluster-Robust Inference</a></li>
+</ul>
+
+</div>
+</div>
+</div>
+ 
+
+
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['$','$'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        " linebreaks: { automatic: true, width: '95% container' }, " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+
+                <div class="clear"></div>
+
+                <div class="info">
+                    <a href="/clustered-sampling-part-2.html">posted at 00:00</a>
+                    &nbsp;&middot;&nbsp;<a href="/category/statistics-inference.html" rel="tag">Statistics, Inference</a>
+                    &nbsp;&middot;
+                    &nbsp;<a href="/tag/experimentation.html" class="tags">Experimentation</a>
+                </div>
+            </article>
+            <div class="clear"></div>
+            <footer>
+                <p>
+                <a href="https://github.com/jody-frankowski/blue-penguin">Blue Penguin</a> Theme
+                &middot;
+                Powered by <a href="http://getpelican.com">Pelican</a>
+            </footer>
+        </div>
+        <div class="clear"></div>
+    </div>
+</body>
+</html>

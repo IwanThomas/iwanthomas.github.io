@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Iwan's Blog | Clustered Sampling Part 1</title>
+    <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/theme/css/screen.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/print.css" type="text/css" media="print" />
+    <meta name="generator" content="Pelican" />
+    <meta name="description" content="" />
+    <meta name="author" content="Iwan Thomas" />
+
+    <meta name="keywords" content="Experimentation" />
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/pages/about.html">About</a></li>
+            </ul>
+        </nav>
+        <div class="header_box">
+            <h1><a href="/">Iwan's Blog</a></h1>
+        </div>
+    </header>
+    <div id="wrapper">
+        <div id="content">            <h4 class="date">Dec 13, 2019</h4>
+
+            <article class="post">
+                <h2 class="title">
+                    <a href="/clustered-sampling-part-1.html" rel="bookmark" title="Permanent Link to &quot;Clustered Sampling Part 1&quot;">Clustered Sampling Part 1</a>
+                </h2>
+
+                
+                
+
+                <style type="text/css">/*!
+*
+* IPython notebook
+*
+*/
+/* CSS font colors for translated ANSI escape sequences */
+/* The color values are a mix of
+   http://www.xcolors.net/dl/baskerville-ivorylight and
+   http://www.xcolors.net/dl/euphrasia */
+.ansi-black-fg {
+  color: #3E424D;
+}
+.ansi-black-bg {
+  background-color: #3E424D;
+}
+.ansi-black-intense-fg {
+  color: #282C36;
+}
+.ansi-black-intense-bg {
+  background-color: #282C36;
+}
+.ansi-red-fg {
+  color: #E75C58;
+}
+.ansi-red-bg {
+  background-color: #E75C58;
+}
+.ansi-red-intense-fg {
+  color: #B22B31;
+}
+.ansi-red-intense-bg {
+  background-color: #B22B31;
+}
+.ansi-green-fg {
+  color: #00A250;
+}
+.ansi-green-bg {
+  background-color: #00A250;
+}
+.ansi-green-intense-fg {
+  color: #007427;
+}
+.ansi-green-intense-bg {
+  background-color: #007427;
+}
+.ansi-yellow-fg {
+  color: #DDB62B;
+}
+.ansi-yellow-bg {
+  background-color: #DDB62B;
+}
+.ansi-yellow-intense-fg {
+  color: #B27D12;
+}
+.ansi-yellow-intense-bg {
+  background-color: #B27D12;
+}
+.ansi-blue-fg {
+  color: #208FFB;
+}
+.ansi-blue-bg {
+  background-color: #208FFB;
+}
+.ansi-blue-intense-fg {
+  color: #0065CA;
+}
+.ansi-blue-intense-bg {
+  background-color: #0065CA;
+}
+.ansi-magenta-fg {
+  color: #D160C4;
+}
+.ansi-magenta-bg {
+  background-color: #D160C4;
+}
+.ansi-magenta-intense-fg {
+  color: #A03196;
+}
+.ansi-magenta-intense-bg {
+  background-color: #A03196;
+}
+.ansi-cyan-fg {
+  color: #60C6C8;
+}
+.ansi-cyan-bg {
+  background-color: #60C6C8;
+}
+.ansi-cyan-intense-fg {
+  color: #258F8F;
+}
+.ansi-cyan-intense-bg {
+  background-color: #258F8F;
+}
+.ansi-white-fg {
+  color: #C5C1B4;
+}
+.ansi-white-bg {
+  background-color: #C5C1B4;
+}
+.ansi-white-intense-fg {
+  color: #A1A6B2;
+}
+.ansi-white-intense-bg {
+  background-color: #A1A6B2;
+}
+.ansi-default-inverse-fg {
+  color: #FFFFFF;
+}
+.ansi-default-inverse-bg {
+  background-color: #000000;
+}
+.ansi-bold {
+  font-weight: bold;
+}
+.ansi-underline {
+  text-decoration: underline;
+}
+/* The following styles are deprecated an will be removed in a future version */
+.ansibold {
+  font-weight: bold;
+}
+.ansi-inverse {
+  outline: 0.5px dotted;
+}
+/* use dark versions for foreground, to improve visibility */
+.ansiblack {
+  color: black;
+}
+.ansired {
+  color: darkred;
+}
+.ansigreen {
+  color: darkgreen;
+}
+.ansiyellow {
+  color: #c4a000;
+}
+.ansiblue {
+  color: darkblue;
+}
+.ansipurple {
+  color: darkviolet;
+}
+.ansicyan {
+  color: steelblue;
+}
+.ansigray {
+  color: gray;
+}
+/* and light for background, for the same reason */
+.ansibgblack {
+  background-color: black;
+}
+.ansibgred {
+  background-color: red;
+}
+.ansibggreen {
+  background-color: green;
+}
+.ansibgyellow {
+  background-color: yellow;
+}
+.ansibgblue {
+  background-color: blue;
+}
+.ansibgpurple {
+  background-color: magenta;
+}
+.ansibgcyan {
+  background-color: cyan;
+}
+.ansibggray {
+  background-color: gray;
+}
+div.cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  width: 100%;
+  padding: 5px;
+  /* This acts as a spacer between cells, that is outside the border */
+  margin: 0px;
+  outline: none;
+  position: relative;
+  overflow: visible;
+}
+div.cell:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: transparent;
+}
+div.cell.jupyter-soft-selected {
+  border-left-color: #E3F2FD;
+  border-left-width: 1px;
+  padding-left: 5px;
+  border-right-color: #E3F2FD;
+  border-right-width: 1px;
+  background: #E3F2FD;
+}
+@media print {
+  div.cell.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+div.cell.selected,
+div.cell.selected.jupyter-soft-selected {
+  border-color: #ababab;
+}
+div.cell.selected:before,
+div.cell.selected.jupyter-soft-selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #42A5F5;
+}
+@media print {
+  div.cell.selected,
+  div.cell.selected.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+.edit_mode div.cell.selected {
+  border-color: #66BB6A;
+}
+.edit_mode div.cell.selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #66BB6A;
+}
+@media print {
+  .edit_mode div.cell.selected {
+    border-color: transparent;
+  }
+}
+.prompt {
+  /* This needs to be wide enough for 3 digit prompt numbers: In[100]: */
+  min-width: 14ex;
+  /* This padding is tuned to match the padding on the CodeMirror editor. */
+  padding: 0.4em;
+  margin: 0px;
+  font-family: monospace;
+  text-align: right;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+  /* Don't highlight prompt number selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Use default cursor */
+  cursor: default;
+}
+@media (max-width: 540px) {
+  .prompt {
+    text-align: left;
+  }
+}
+div.inner_cell {
+  min-width: 0;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_area {
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
+  background: #f7f7f7;
+  line-height: 1.21429em;
+}
+/* This is needed so that empty prompt areas can collapse to zero height when there
+   is no content in the output_subarea and the prompt. The main purpose of this is
+   to make sure that empty JavaScript output_subareas have no height. */
+div.prompt:empty {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+div.unrecognized_cell {
+  padding: 5px 5px 5px 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.unrecognized_cell .inner_cell {
+  border-radius: 2px;
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+  border: 1px solid #cfcfcf;
+  background: #eaeaea;
+}
+div.unrecognized_cell .inner_cell a {
+  color: inherit;
+  text-decoration: none;
+}
+div.unrecognized_cell .inner_cell a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+@media (max-width: 540px) {
+  div.unrecognized_cell > div.prompt {
+    display: none;
+  }
+}
+div.code_cell {
+  /* avoid page breaking on code cells when printing */
+}
+@media print {
+  div.code_cell {
+    page-break-inside: avoid;
+  }
+}
+/* any special styling for code cells that are currently running goes here */
+div.input {
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.input {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_prompt {
+  color: #303F9F;
+  border-top: 1px solid transparent;
+}
+div.input_area > div.highlight {
+  margin: 0.4em;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+div.input_area > div.highlight > pre {
+  margin: 0px;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+/* The following gets added to the <head> if it is detected that the user has a
+ * monospace font with inconsistent normal/bold/italic height.  See
+ * notebookmain.js.  Such fonts will have keywords vertically offset with
+ * respect to the rest of the text.  The user should select a better font.
+ * See: https://github.com/ipython/ipython/issues/1503
+ *
+ * .CodeMirror span {
+ *      vertical-align: bottom;
+ * }
+ */
+.CodeMirror {
+  line-height: 1.21429em;
+  /* Changed from 1em to our global default */
+  font-size: 14px;
+  height: auto;
+  /* Changed to auto to autogrow */
+  background: none;
+  /* Changed from white to allow our bg to show through */
+}
+.CodeMirror-scroll {
+  /*  The CodeMirror docs are a bit fuzzy on if overflow-y should be hidden or visible.*/
+  /*  We have found that if it is visible, vertical scrollbars appear with font size changes.*/
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.CodeMirror-lines {
+  /* In CM2, this used to be 0.4em, but in CM3 it went to 4px. We need the em value because */
+  /* we have set a different line-height and want this to scale with that. */
+  /* Note that this should set vertical padding only, since CodeMirror assumes
+       that horizontal padding will be set on CodeMirror pre */
+  padding: 0.4em 0;
+}
+.CodeMirror-linenumber {
+  padding: 0 8px 0 4px;
+}
+.CodeMirror-gutters {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.CodeMirror pre {
+  /* In CM3 this went to 4px from 0 in CM2. This sets horizontal padding only,
+    use .CodeMirror-lines for vertical */
+  padding: 0 0.4em;
+  border: 0;
+  border-radius: 0;
+}
+.CodeMirror-cursor {
+  border-left: 1.4px solid black;
+}
+@media screen and (min-width: 2138px) and (max-width: 4319px) {
+  .CodeMirror-cursor {
+    border-left: 2px solid black;
+  }
+}
+@media screen and (min-width: 4320px) {
+  .CodeMirror-cursor {
+    border-left: 4px solid black;
+  }
+}
+/*
+
+Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Org>
+Adapted from GitHub theme
+
+*/
+.highlight-base {
+  color: #000;
+}
+.highlight-variable {
+  color: #000;
+}
+.highlight-variable-2 {
+  color: #1a1a1a;
+}
+.highlight-variable-3 {
+  color: #333333;
+}
+.highlight-string {
+  color: #BA2121;
+}
+.highlight-comment {
+  color: #408080;
+  font-style: italic;
+}
+.highlight-number {
+  color: #080;
+}
+.highlight-atom {
+  color: #88F;
+}
+.highlight-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.highlight-builtin {
+  color: #008000;
+}
+.highlight-error {
+  color: #f00;
+}
+.highlight-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.highlight-meta {
+  color: #AA22FF;
+}
+/* previously not defined, copying from default codemirror */
+.highlight-def {
+  color: #00f;
+}
+.highlight-string-2 {
+  color: #f50;
+}
+.highlight-qualifier {
+  color: #555;
+}
+.highlight-bracket {
+  color: #997;
+}
+.highlight-tag {
+  color: #170;
+}
+.highlight-attribute {
+  color: #00c;
+}
+.highlight-header {
+  color: blue;
+}
+.highlight-quote {
+  color: #090;
+}
+.highlight-link {
+  color: #00c;
+}
+/* apply the same style to codemirror */
+.cm-s-ipython span.cm-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-atom {
+  color: #88F;
+}
+.cm-s-ipython span.cm-number {
+  color: #080;
+}
+.cm-s-ipython span.cm-def {
+  color: #00f;
+}
+.cm-s-ipython span.cm-variable {
+  color: #000;
+}
+.cm-s-ipython span.cm-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-variable-2 {
+  color: #1a1a1a;
+}
+.cm-s-ipython span.cm-variable-3 {
+  color: #333333;
+}
+.cm-s-ipython span.cm-comment {
+  color: #408080;
+  font-style: italic;
+}
+.cm-s-ipython span.cm-string {
+  color: #BA2121;
+}
+.cm-s-ipython span.cm-string-2 {
+  color: #f50;
+}
+.cm-s-ipython span.cm-meta {
+  color: #AA22FF;
+}
+.cm-s-ipython span.cm-qualifier {
+  color: #555;
+}
+.cm-s-ipython span.cm-builtin {
+  color: #008000;
+}
+.cm-s-ipython span.cm-bracket {
+  color: #997;
+}
+.cm-s-ipython span.cm-tag {
+  color: #170;
+}
+.cm-s-ipython span.cm-attribute {
+  color: #00c;
+}
+.cm-s-ipython span.cm-header {
+  color: blue;
+}
+.cm-s-ipython span.cm-quote {
+  color: #090;
+}
+.cm-s-ipython span.cm-link {
+  color: #00c;
+}
+.cm-s-ipython span.cm-error {
+  color: #f00;
+}
+.cm-s-ipython span.cm-tab {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAAXNSR0IArs4c6QAAAGFJREFUSMft1LsRQFAQheHPowAKoACx3IgEKtaEHujDjORSgWTH/ZOdnZOcM/sgk/kFFWY0qV8foQwS4MKBCS3qR6ixBJvElOobYAtivseIE120FaowJPN75GMu8j/LfMwNjh4HUpwg4LUAAAAASUVORK5CYII=);
+  background-position: right;
+  background-repeat: no-repeat;
+}
+div.output_wrapper {
+  /* this position must be relative to enable descendents to be absolute within it */
+  position: relative;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 1;
+}
+/* class for the output area when it should be height-limited */
+div.output_scroll {
+  /* ideally, this would be max-height, but FF barfs all over that */
+  height: 24em;
+  /* FF needs this *and the wrapper* to specify full width, or it will shrinkwrap */
+  width: 100%;
+  overflow: auto;
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  display: block;
+}
+/* output div while it is collapsed */
+div.output_collapsed {
+  margin: 0px;
+  padding: 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+div.out_prompt_overlay {
+  height: 100%;
+  padding: 0px 0.4em;
+  position: absolute;
+  border-radius: 2px;
+}
+div.out_prompt_overlay:hover {
+  /* use inner shadow to get border that is computed the same on WebKit/FF */
+  -webkit-box-shadow: inset 0 0 1px #000;
+  box-shadow: inset 0 0 1px #000;
+  background: rgba(240, 240, 240, 0.5);
+}
+div.output_prompt {
+  color: #D84315;
+}
+/* This class is the outer container of all output sections. */
+div.output_area {
+  padding: 0px;
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.output_area .MathJax_Display {
+  text-align: left !important;
+}
+div.output_area 
+div.output_area 
+div.output_area img,
+div.output_area svg {
+  max-width: 100%;
+  height: auto;
+}
+div.output_area img.unconfined,
+div.output_area svg.unconfined {
+  max-width: none;
+}
+div.output_area .mglyph > img {
+  max-width: none;
+}
+/* This is needed to protect the pre formating from global settings such
+   as that of bootstrap */
+.output {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.output_area {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+div.output_area pre {
+  margin: 0;
+  padding: 1px 0 1px 0;
+  border: 0;
+  vertical-align: baseline;
+  color: black;
+  background-color: transparent;
+  border-radius: 0;
+}
+/* This class is for the output subarea inside the output_area and after
+   the prompt div. */
+div.output_subarea {
+  overflow-x: auto;
+  padding: 0.4em;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+  max-width: calc(100% - 14ex);
+}
+div.output_scroll div.output_subarea {
+  overflow-x: visible;
+}
+/* The rest of the output_* classes are for special styling of the different
+   output types */
+/* all text output has this class: */
+div.output_text {
+  text-align: left;
+  color: #000;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+}
+/* stdout/stderr are 'text' as well as 'stream', but execute_result/error are *not* streams */
+div.output_stderr {
+  background: #fdd;
+  /* very light red background for stderr */
+}
+div.output_latex {
+  text-align: left;
+}
+/* Empty output_javascript divs should have no height */
+div.output_javascript:empty {
+  padding: 0;
+}
+.js-error {
+  color: darkred;
+}
+/* raw_input styles */
+div.raw_input_container {
+  line-height: 1.21429em;
+  padding-top: 5px;
+}
+pre.raw_input_prompt {
+  /* nothing needed here. */
+}
+input.raw_input {
+  font-family: monospace;
+  font-size: inherit;
+  color: inherit;
+  width: auto;
+  /* make sure input baseline aligns with prompt */
+  vertical-align: baseline;
+  /* padding + margin = 0.5em between prompt and cursor */
+  padding: 0em 0.25em;
+  margin: 0em 0.25em;
+}
+input.raw_input:focus {
+  box-shadow: none;
+}
+p.p-space {
+  margin-bottom: 10px;
+}
+div.output_unrecognized {
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+}
+div.output_unrecognized a {
+  color: inherit;
+  text-decoration: none;
+}
+div.output_unrecognized a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+.rendered_html {
+  color: #000;
+  /* any extras will just be numbers: */
+}
+
+
+
+.rendered_html :link {
+  text-decoration: underline;
+}
+.rendered_html :visited {
+  text-decoration: underline;
+}
+
+
+
+
+
+
+.rendered_html h1:first-child {
+  margin-top: 0.538em;
+}
+.rendered_html h2:first-child {
+  margin-top: 0.636em;
+}
+.rendered_html h3:first-child {
+  margin-top: 0.777em;
+}
+.rendered_html h4:first-child {
+  margin-top: 1em;
+}
+.rendered_html h5:first-child {
+  margin-top: 1em;
+}
+.rendered_html h6:first-child {
+  margin-top: 1em;
+}
+.rendered_html ul:not(.list-inline),
+.rendered_html ol:not(.list-inline) {
+  padding-left: 2em;
+}
+
+
+
+
+
+
+
+
+.rendered_html * + ul {
+  margin-top: 1em;
+}
+.rendered_html * + ol {
+  margin-top: 1em;
+}
+
+
+
+
+
+.rendered_html pre,
+
+
+
+
+.rendered_html tr,
+.rendered_html th,
+
+
+.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+.rendered_html * + table {
+  margin-top: 1em;
+}
+
+.rendered_html * + p {
+  margin-top: 1em;
+}
+
+.rendered_html * + img {
+  margin-top: 1em;
+}
+.rendered_html img,
+
+.rendered_html img.unconfined,
+
+
+.rendered_html * + .alert {
+  margin-top: 1em;
+}
+[dir="rtl"] 
+div.text_cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.text_cell > div.prompt {
+    display: none;
+  }
+}
+div.text_cell_render {
+  /*font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;*/
+  outline: none;
+  resize: none;
+  width: inherit;
+  border-style: none;
+  padding: 0.5em 0.5em 0.5em 0.4em;
+  color: #000;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+a.anchor-link:link {
+  text-decoration: none;
+  padding: 0px 20px;
+  visibility: hidden;
+}
+h1:hover .anchor-link,
+h2:hover .anchor-link,
+h3:hover .anchor-link,
+h4:hover .anchor-link,
+h5:hover .anchor-link,
+h6:hover .anchor-link {
+  visibility: visible;
+}
+.text_cell.rendered .input_area {
+  display: none;
+}
+.text_cell.rendered 
+.text_cell.rendered .rendered_html tr,
+.text_cell.rendered .rendered_html th,
+.text_cell.rendered 
+.text_cell.unrendered .text_cell_render {
+  display: none;
+}
+.text_cell .dropzone .input_area {
+  border: 2px dashed #bababa;
+  margin: -1px;
+}
+.cm-header-1,
+.cm-header-2,
+.cm-header-3,
+.cm-header-4,
+.cm-header-5,
+.cm-header-6 {
+  font-weight: bold;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.cm-header-1 {
+  font-size: 185.7%;
+}
+.cm-header-2 {
+  font-size: 157.1%;
+}
+.cm-header-3 {
+  font-size: 128.6%;
+}
+.cm-header-4 {
+  font-size: 110%;
+}
+.cm-header-5 {
+  font-size: 100%;
+  font-style: italic;
+}
+.cm-header-6 {
+  font-size: 100%;
+  font-style: italic;
+}
+</style>
+<style type="text/css">.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Clustered-Sampling-Part-1">Clustered Sampling Part 1<a class="anchor-link" href="#Clustered-Sampling-Part-1">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h3><p>This is part one of a two-part blog series exploring clustered sampling.</p>
+<ul>
+<li>In this first part, I want to introduce an example that we'll use to motivate clustered sampling.</li>
+<li>The second part will address how we can overcome the problem described in part one to produce robust analysis.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Motivation">Motivation<a class="anchor-link" href="#Motivation">&#182;</a></h3><p>I'll take an example from Deliveroo. Deliveroo enables customers to order takeaway food from a range of restaurants and track their order until it's delivered. This tracking is shown to customers via the order tracker. Whenever we make changes to this product surface, one of the metrics that is typically monitored is the number of CS contacts per order, defined as the number of CS contacts divided by the number of orders.</p>
+<p>Commonly, experiments on this part of the app are randomised on some <code>user_id</code>, referred to as the unit of diversion. Our metric however is an order-level metric - in this case, an <code>order</code> is referred to as the unit of analysis. When the unit of diversion and the unit of analysis are different, the independence assumption implicit in many statistical tests can be violated leading to unreliable results (<a href="https://towardsdatascience.com/the-second-ghost-of-experimentation-the-fallacy-of-session-based-metrics-fb65006d30ff">See Skyscanner blog post for more details</a>). For intuition, we can imagine that the likelihood that a customer contacts CS is correlated across their orders; because of this, each order is not independent and an assumption of a standard statistical test has been violated.</p>
+<p>In this blog post, I will simulate some data to aid us in understanding how this type of experimental setup can complicate our inference. I will simulate an experiment where $\frac{\text{CS Contacts}}{\text{Orders}}$ is our test metric and traffic is diverted to either group using a user_id. We'll use the bootstrap technique to construct a sampling distribution for two experiments - one, where the unit of diversion and the unit of analysis are the same and one where they are different. We'll compare this sampling distribution against the expected sampling distribution when we use the analytical variability and explore the issues that arise when we don't account for different units of diversion and analysis.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Import-Libraries">Import Libraries<a class="anchor-link" href="#Import-Libraries">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.mlab</span> <span class="k">as</span> <span class="nn">mlab</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># suppress future &amp; Matplotlib Deprecation warning</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cbook</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">cbook</span><span class="o">.</span><span class="n">mplDeprecation</span><span class="p">)</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Define-some-helper-functions">Define some helper functions<a class="anchor-link" href="#Define-some-helper-functions">&#182;</a></h3><p>The first two functions are used to generate our datasets. The following functions are used to generate the plots.</p>
+<ul>
+<li><code>generate_data</code>: a function to generate some synthetic data. </li>
+<li><p><code>transform_data</code>: a function that converts between user-level and order-level data</p>
+</li>
+<li><p><code>get_theoretical_data</code>: a function that outputs the theoretically expected sampling distribution</p>
+</li>
+<li><code>calculate_theoretical_ci</code>: a function that outputs the theoretically expected confidence intervals</li>
+<li><code>calculate_unlikely_result</code>: a function that calculates the false positive rate when compared against the analytical result</li>
+<li><code>plot_sampling_dist</code>: a function that plots the sampling distribution</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">generate_data</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Randomly generate data</span>
+<span class="sd">    </span>
+<span class="sd">    n: number of users</span>
+<span class="sd">    mu: parameterizes number of orders placed</span>
+<span class="sd">    p: parameterizes number of cs contacts made</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">rands_array</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="c1"># random key for each user</span>
+    <span class="n">orders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cs_contacts</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># for each user, generate a random number of orders and CS contacts</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">user_id</span><span class="p">:</span>
+        <span class="n">num_orders</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">poisson</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+        <span class="n">user_orders</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">num_orders</span><span class="p">)</span>
+        <span class="n">user_cs_contacts</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">bernoulli</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">num_orders</span><span class="p">)</span>
+        
+        <span class="n">orders</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orders</span><span class="p">,</span> <span class="n">user_orders</span><span class="p">)</span>
+        <span class="n">cs_contacts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cs_contacts</span><span class="p">,</span> <span class="n">user_cs_contacts</span><span class="p">)</span>
+
+    <span class="c1"># return a DataFrame</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">orders</span><span class="p">,</span> <span class="n">cs_contacts</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;userid&#39;</span><span class="p">,</span> <span class="s1">&#39;cs_contacts&#39;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;cs_contacts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;cs_contacts&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="k">def</span> <span class="nf">transform_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">user_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;userid&#39;</span><span class="p">)[</span><span class="s1">&#39;cs_contacts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;sum&#39;</span><span class="p">])</span>
+    <span class="n">user_data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;orders&#39;</span><span class="p">,</span> <span class="s1">&#39;cs_contacts&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">user_data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_theoretical_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">):</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">cs_contacts</span><span class="p">)</span>
+    <span class="n">se</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">mean</span><span class="p">)</span><span class="o">/</span><span class="n">sample_size</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mean</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">se</span><span class="p">,</span> <span class="n">mean</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">se</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">se</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">calculate_theoretical_ci</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">):</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">cs_contacts</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">se</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">mean</span><span class="p">)</span><span class="o">/</span><span class="n">sample_size</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="mf">1.96</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">mean</span> <span class="o">-</span> <span class="n">z</span><span class="o">*</span><span class="n">se</span><span class="p">,</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">z</span><span class="o">*</span><span class="n">se</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">calculate_unlikely_result</span> <span class="p">(</span><span class="n">boot_data</span><span class="p">,</span> <span class="n">ci_theoretical</span><span class="p">):</span>
+    <span class="n">lower</span> <span class="o">=</span> <span class="n">ci_theoretical</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">upper</span> <span class="o">=</span> <span class="n">ci_theoretical</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">significant</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">boot_data</span> <span class="k">if</span> <span class="n">e</span> <span class="o">&lt;=</span> <span class="n">lower</span> <span class="ow">or</span> <span class="n">e</span> <span class="o">&gt;=</span> <span class="n">upper</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">significant</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">boot_data</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">plot_sampling_dist</span><span class="p">(</span><span class="n">boot_orders</span><span class="p">,</span> <span class="n">boot_users</span><span class="p">,</span> <span class="n">df_orders</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">boot_orders</span><span class="p">,</span> <span class="n">hist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Order Randomisation&#39;</span><span class="p">,</span> <span class="n">hist_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">});</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">boot_users</span><span class="p">,</span> <span class="n">hist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;User Randomisation&#39;</span><span class="p">,</span> <span class="n">hist_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">});</span>
+    
+    <span class="c1"># get theoretical distribution</span>
+    <span class="c1"># use average CS contacts rate from order level data</span>
+    <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">get_theoretical_data</span><span class="p">(</span><span class="n">df_orders</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Theoretical Variance&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">);</span>
+
+    <span class="c1"># labels</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;CS Contact Rate&#39;</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Let's-create-our-dataset">Let's create our dataset<a class="anchor-link" href="#Let's-create-our-dataset">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">create_dataset</span><span class="p">():</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3750</span><span class="p">,</span> <span class="mi">4500</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
+    <span class="n">mus</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span>
+    <span class="n">p_values</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">]</span>
+
+    <span class="n">orders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">mus</span><span class="p">,</span> <span class="n">p_values</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">generate_data</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span>
+        <span class="n">orders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="n">df_orders</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">orders</span><span class="p">)</span>
+    <span class="n">df_orders</span><span class="p">[</span><span class="s1">&#39;order_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_orders</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">df_orders</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_orders</span> <span class="o">=</span> <span class="n">create_dataset</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's have a glance at our data</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Number of orders </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_orders</span><span class="p">)))</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">df_orders</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Number of orders 12525
+
+                 userid  cs_contacts group  order_id
+0  ZAXhsdOITwD8iUh1tkB3          0.0     A         0
+1  ZAXhsdOITwD8iUh1tkB3          1.0     A         1
+2  Yy5tOVJX3MBlnXKkcKGz          0.0     A         2
+3  qW62p0TjecSLx8RauhHJ          0.0     A         3
+4  4HpqT8CZlOWPKf5Hct2E          0.0     A         4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Convert the order-level data to user-level data</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_users</span> <span class="o">=</span> <span class="n">transform_data</span><span class="p">(</span><span class="n">df_orders</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Number of users </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_users</span><span class="p">)))</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">df_users</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Number of users 6083
+
+                      orders  cs_contacts
+userid                                   
+01ZHC1el3DVk6Q4TKj3S       1          0.0
+01y2GdI19n8gRh3WvIGA       3          1.0
+02BFzufL9airYIgtTrcj       2          1.0
+02LTE8q7JQJeV5T9FY0P       3          1.0
+02vNujKXi0yE0jZDiAUt       3          0.0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Print out the order and user-level CS contact rate</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">user_conversion</span> <span class="o">=</span> <span class="n">df_users</span><span class="o">.</span><span class="n">cs_contacts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">df_users</span><span class="o">.</span><span class="n">orders</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Session level conversion: </span><span class="si">{:.2f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">df_orders</span><span class="o">.</span><span class="n">cs_contacts</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;User level conversion: </span><span class="si">{:.2f}</span><span class="s2"> %&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">user_conversion</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Session level conversion: 27.25 %
+User level conversion: 27.25 %
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Simulate-an-Experiment">Simulate an Experiment<a class="anchor-link" href="#Simulate-an-Experiment">&#182;</a></h3><p>Now we want to simulate an experiment whereby we randomly sample users or orders, construct the sampling distribution and compare the standard error of this distribution to the theoretical number we would expect. We can do this in two ways:</p>
+<ul>
+<li><strong>By randomly selecting orders</strong>: under this scheme, each order is treated as if independent.</li>
+<li><strong>By randomly selecting users</strong>: this mimics the experimental setup described in the introduction; selecting users (using a <code>user_id</code>) but using order-level metrics.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_simulations</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="n">sample_size</span> <span class="o">=</span> <span class="mi">2000</span>
+
+<span class="c1"># use the bootstrap technique to simulate sampling distribution</span>
+<span class="n">boot_orders</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">df_orders</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sample_mean</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">cs_contacts</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">boot_orders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample_mean</span><span class="p">)</span>
+
+<span class="c1"># repeat the same for users</span>
+<span class="n">boot_users</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">df_users</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sample_mean</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">cs_contacts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">sample</span><span class="o">.</span><span class="n">orders</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">boot_users</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample_mean</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Plotted below are three sampling distributions:</p>
+<ul>
+<li>The theoretical sampling distribution.</li>
+<li>The sampling distribution when randomising on sessions.</li>
+<li>The sampling distribution when randomising on users.</li>
+</ul>
+<p>The theoretical and order-randomised distributions follow each other very closely - this makes sense because the independence assumption is satisfied. The user-randomised distribution, on the other hand, is far wider than the theoretical distribution.</p>
+<p>Whilst our estimates are unbiased for both the order-randomised and user-randomised distributions, it's clear that there's considerable scope for errors in our inference if we assume the theoretical variance shown in the dotted black line, whereas in reality we have a the user-randomised sampling distribution.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot_sampling_dist</span><span class="p">(</span><span class="n">boot_orders</span><span class="p">,</span> <span class="n">boot_users</span><span class="p">,</span> <span class="n">df_orders</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAmEAAAF3CAYAAADtkpxQAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDMuMC4yLCBodHRwOi8vbWF0cGxvdGxpYi5vcmcvOIA7rQAAIABJREFUeJzs3Xd8leX9//HXlZNxkpBFwsgAEjZkApElINNZUVQcrRa06s9tra1atVVr7VdbqtZR6yxqraNSRK3WCbI3YYURZEZCICGD7JyT+/dH4FQkkAA5uU+S9/PxyMNz7nPf1/3OZQgfrvu6r9tYloWIiIiItCw/uwOIiIiItEcqwkRERERsoCJMRERExAYqwkRERERsoCJMRERExAYqwkRERERsoCJMRERExAYqwkRERERsoCJMRERExAYqwkRERERs4G93gKaIiYmxEhMTj9nucrnw928V34Jt1Ecnpv5pnPqoceqjxqmPTkz907jW1EerVq0qsCyrU2P7tYrvJjExkZUrVx6zvaCggJiYGBsStR7qoxNT/zROfdQ49VHj1Ecnpv5pXGvqI2PMrqbsp8uRIiIiIjZQESYiIiJiAxVhIiIiIjZoFXPCREREvKm2tpbc3FyqqqpsOb/b7ebAgQO2nLu18MU+cjqdJCQkEBAQcErHqwgTEZF2Lzc3l7CwMBITEzHGtPj5a2trT/kv8vbC1/rIsiwKCwvJzc0lKSnplNrQ5UgREWn3qqqqiI6OtqUAk9bJGEN0dPRpjZ6qCBMREQEVYHLSTvdnRkWYiIiIzQoLC8nIyCAjI4OuXbsSHx9PRkYGkZGRDBw4sEWzZGVl8cknn3jef/jhhzz++OOn1FZiYiIFBQVHbbv22mt58cUXj9r2wQcfcN55551U29dffz3Z2dmnlMtXqAgTERGxWXR0NFlZWWRlZXHTTTdx1113ed77+TX/X9Uul+u4n/2wCJs8eTL33Xdfs537qquu4p133jlq2zvvvMNVV13V5DbcbjevvPJKixeozU1FmIiIiA9zu93ccMMNJCcnc/bZZ1NZWQnAt99+y7nnnsuQIUMYPXo0mzdvBmDnzp2MHz+etLQ0JkyYwO7duwGYPn06N910E8OGDeOee+6hvLyc6667jqFDhzJo0CDmzJlDTU0Nv/3tb3n33XfJyMjg3XffZebMmdx2220A5OfnM2XKFNLT00lPT2fx4sUAXHzxxQwZMoTk5GReeumlE34/EyZMYPPmzeTl5QFQXl7Ol19+ycUXX3zCtqKiorj77rtJT09nyZIljB071vM0nZtvvpnMzEySk5N56KGHPMckJiby0EMPMXjwYFJTUz19VFZWxrXXXktqaippaWnMmjULgM8//5wRI0YwePBgpk6dSllZ2Wn8n2uc7o4UERH5gbFjxx6z7fLLL+eWW26hoqKC888//5jPp0+fzvTp0ykoKOCyyy476rN58+adcpacnBzefvttXn75ZS6//HJmzZrF1VdfzY033sjf/vY3+vTpw7Jly7jlllv4+uuvuf3225k2bRrTpk3jtdde44477uCDDz4A6u8CXbx4MQ6Hg/vvv5/x48fz2muvUVxczNChQ5k4cSK/+93vWLlyJc899xwAM2fO9GS54447OOuss5g9ezZut9tTpLz22mt07NiRyspKzjjjDC699FKio6Mb/H4cDgeXXnop7733HnfeeScfffQRY8eOJTw8/IRtlZeXM2zYMP785z8f0+Zjjz1Gx44dcbvdTJgwgXXr1pGWlgZATEwMq1ev5q9//SszZszglVde4dFHHyUiIoL169cDUFRUREFBAb///e/58ssvCQ0N5YknnuDJJ5/kt7/97Sn/v2uMijAREREflpSUREZGBgBDhgxh586dlJWVsXjxYqZOnerZr7q6GoAlS5bw73//G4BrrrmGe+65x7PP1KlTcTgcQP2oz4cffsiMGTOA+jtEj4yaHc/XX3/NG2+8AdQXUxEREQA888wzzJ49G4A9e/aQk5Nz3CIM6i9J/vKXv+TOO+/knXfe4ZprrvF8dry2jhRvDXnvvfd46aWXcLlc5OXlkZ2d7SnCLrnkEk/fHemXL7/88qhLolFRUXz88cdkZ2dz5plnAlBTU8OIESNO2B+nS0WYiIjID5xo5CokJOSEn8fExJzWyNcPBQUFeV47HA4qKyupq6sjMjKSrKysk2orNDTU89qyLGbNmkW/fv2O2mfZsmUn1ea8efP48ssvWbJkCSEhIYwdO7bRZRtGjhxJXl4ea9euZfHixZ6C6ERtOZ1OTwH5fTt27GDGjBmsWLGCqKgopk+fftT5j/Sfw+E44Vw4y7KYNGkSb7/99kl9/6dDc8JEpE156outDX6JtCXh4eEkJSXxr3/9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8uTGjRtPKktmZibXXHONZ95YSUkJ8fHxALz++uuNHj9mzBg++OADKisrOXToEB999BEAERERREVFeeZvvfnmm55RsZO1a9cuunTpwg033MD111/P6tWrKS0tJTQ0lIiICPLz8/n00089+4eFhXHo0KFj2hk9ejQffPABFRUVlJeXM3v2bEaPHn1KmU6FLkeKiIjYzBjD7NmzueWWW3j00Uepq6vj/PPP5w9/+EOD+0+ZMoWvv/6agQMH0r17d0aMGAHUz6t6//33ueOOOygpKcHlcvHzn//8qEt5TXHvvfcyePBg7r//fh5++GGmTp1KVFQU48ePZ8eOHSc8dvDgwVxxxRWkp6fTuXNnzjjjDM9nr7/+OjfddBMVFRX07NmTv//97yeV64h58+bxpz/9iYCAADp06MAbb7xBUlISgwYNon///nTr1o0zzzzTs/+NN97Iueee65kb9v2s06dPZ+jQoQBcf/31DBo0yCuXHhtiLMtqkROdjszMTGvlypXHbC8oKCAmJsaGRK2H+ujE1D+N85U+amjkq6Hb/o83QtbUfRtbSqAhvtJHvszX+2jTpk0MGDDAtvPX1tYSEBBg2/lbA1/to4Z+dowxqyzLymzsWF2OFBEREbGBijARERERG6gIExEREbGBijARERERG6gIExEREbGBijARERERG6gIExERsdnOnTtJSUk5atvDDz/MjBkzmv1cDofD8+DrCy+8kOLi4mZpt6Hv4VT99re/5csvvzzp4+bNm+d5jibA3/72N88CuL5Ii7WKiIj80Nz/a972xv26edtrIpfLhb//0X/VBwcHk5WVBdQ/v/H5558/6iHfvuB3v/vdKR03b948OnTowMiRIwG46aabmjNWs9NImIiIiI975plnGDhwIGlpaVx55ZUAlJeXc9111zF06FAGDRrEnDlzAJg5cyaTJ09m/PjxTJgw4YTtjhgxgu+++w6AsrIyJkyYwODBg0lNTfW0t3PnTgYMGMANN9xAcnIyZ599NpWVlQCsWrWK9PR00tPTef755z3tVlVVce2115KamsqgQYM8q9TPnDmTiy++mEmTJpGYmMhzzz3Hk08+yaBBgxg+fDgHDx4EYPr06bz//vsA3HfffQwcOJDBgwfzy1/+EoCPPvqIYcOGMWjQICZOnEh+fj47d+7kb3/7G0899RQZGRksWLDgqNHErKwshg8fTlpaGlOmTKGoqAiAsWPHcu+99zJ06FD69u3reaxSS/B6EWaMcRhj1hhjPj78PskYs8wYs80Y864xJtDbGURERFqzxx9/nDVr1rBu3Tr+9re/AfDYY48xfvx4li9fzty5c/nVr35FeXk5AKtXr+b999/nm2++OW6bbrebr776ismTJwPgdDqZPXs2q1evZu7cudx9990ceapOTk4Ot956Kxs3biQyMpJZs2YBcO211/Lss8+ydu3ao9p+/vnnMcawfv163n77baZNm+Z5mPaGDRv497//zYoVK3jggQcICQlhzZo1jBgx4phLh4WFhcyePZuNGzeyevVqHnzwQQBGjRrF0qVLWbNmDVdeeSV//OMfSUxM5KabbuKuu+4iKyvrmGdA/vSnP+WJJ55g3bp1pKam8sgjj3g+c7lcLF++nKeffvqo7d7WEiNhdwKbvvf+CeApy7J6A0XAz1ogg4i0I3WWxbcHyvhqUz6vL97JZxv3sbe40u5YIsdljDnh9rS0NH7yk5/wj3/8w3N58fPPP+fxxx8nIyODsWPHUlVVxe7duwGYNGkSHTt2bLDNyspKMjIy6Nq1K/n5+UyaNAkAy7K4//77SUtLY+LEiXz33Xfk5+cDkJSUREZGBgBDhgxh586dFBcXU1xczJgxYwC45pprPOdYuHAhV199NQD9+/enR48ebN1a/5iwcePGERYWRqdOnYiIiODCCy8EIDU19ZhnNkZEROB0OvnZz37G7NmzPQ8zz83N5ZxzziE1NZU//elPjT6kvKSkhOLiYs8Dw6dNm8b8+fM9n19yySVHfW8txatFmDEmAbgAeOXwewOMB94/vMvrwMXezCAi7UdxcTErv/qQDxdv5ON1eWzNLyMiOICc/WWM//M8Xlmw3e6IIg2Kjo72XB474uDBg57nbf7nP//h1ltvZfXq1Zxxxhm4XC4sy2LWrFlkZWWRlZXF7t27Pc8wDA0NPe65jswJ27VrF5ZleS4jvvXWWxw4cIBVq1aRlZVFly5dPKNXQUFBnuMdDgcul+uUv9fvt+Xn5+d57+fnd0y7/v7+LF++nMsuu4xPPvmEc889F4Dbb7+d2267jfXr1/Piiy96cp5uptP93k6Wt0fCngbuAeoOv48Gii3LOvId5gLxXs4gIm1cUVER9957L927d+efT/yKLVu3MrJXNKOCdlE7/0Uu7uPkzF4x/P4/m1i0rcDuuCLH6NChA7GxsXz99ddAfQH23//+l1GjRlFXV8eePXsYN24cTzzxBCUlJZSVlXHOOefw7LPPei4Zrlmz5qTOGRISwjPPPMOf//xnXC4XJSUldO7cmYCAAObOncuuXbtOeHxkZCSRkZEsXLgQqC/ijhg9erTn/datW9m9ezf9+vU7qXxQP0+tpKSE888/nxkzZngue5aUlBAfX18+vP766579w8LCOHTo0DHtREREEBUV5Znv9eabb3pGxezktbsjjTE/AvZblrXKGDP2FI6/EbgRICEhgYKCY39xlpSUnG7MNk99dGLqn8b5Sh853RXHbCsoKCAvL4+pU6eSk5NDj8zxhPY9l3PPzGBoNydfLt/Kis/+zaalc5k1631y8p3c868s3pmWSnCg47htnixf6SNf5ut95Ha7qa2t9bz3q3M3a/t132v7eOd/9dVXufPOO7nrrrsAeOCBB+jevTtVVVX85Cc/oaSkBMuyuPXWWwkNDeW+++7j7rvvJjU1lbq6OpKSkvjggw9wu93U1dUd9f380JHPUlJSSElJ4c033+Tyyy9nypQppKSkMGTIEPr16+fZz7Isz2u32+3pr5dffpkbbrgBYwwTJ0707HfDDTdw2223kZKSgr+/P6+88gp+fn4NZqutraW2tvaoz+rq6nC5XBw8eJBLL72UqqoqLMvij3/8I7W1tTz44INMnTqVyMhIxo0bx/bt26mtreXcc8/lyiuv5IMPPuDpp58+Kusrr7zCbbfdRkVFBUlJSbzyyivU1tZiWRYul8uT4/v90xRut/uUfm8AmCMVdHMzxvwfcA3gApxAODAbOAfoalmWyxgzAnjYsqxzTtRWZmamtXLlymO2FxQUeIZqpWHqoxNT/zTOV/roqS+2Nrj9pQduYMfGVYy/fQbZdOPM3tFk9vjfXJi9O7bw4q9/RqCpY8Yr7/Dw0mquPTORhy5MbrDNuyb1PelsvtJHvszX+2jTpk2eS3l2qK2tJSAgwLbztwa+2kcN/ewYY1ZZlpXZ2LFeuxxpWdavLctKsCwrEbgS+NqyrJ8Ac4HLDu82DZjjrQwi0vZd/vNHueZ3r7LVrzsJUcEM6R511OdxSf24/cl/Eh4ezj03/pjLBnRg5uKdZO8ttSmxiEg9O9YJuxf4hTFmG/VzxF61IYOItHJZ8z/FVVtDeEwX1lVH4/AznDOwa4N3mcXEdefjjz/m9ttv59eXDMXp7+DNpTtbPrSIyPe0yIr5lmXNA+Ydfr0dGNoS5xWRtinrm09447G7mHLLg4RnXkh+aTXnpXSlg/P4v9IGDhzIwIEDAbhgYCfmZO3lpyN6EOTvaKnYIiJH0Yr5ItKqVJaVMuvZR+jeP51BZ09lybeFJEQF06dzhyYdv3LlSv75q4sp2f8dm/cdexeVtF/emiMtbdfp/syoCBORVuWrd1+i4lAJl93xMMt2lVDjrmNs307HXezyh2JjYyk+WAgr32X9dyX6i1eA+tXiCwsL9fMgTWZZFoWFhTidzlNuQw/wFpFWo2j/Xub/+3WGTJhMYOeebFixh0HdIonuENT4wYfFx8fzi1/8gscee4y6lAvI69eZuMhgL6aW1iAhIYHc3FwOHDhgy/ndbjcOhy6Nn4gv9pHT6SQhIeGUj1cRJiKtRnVlBYkDB3HutDuZ920BwQEOhvVs+NEsJ3LPPffw4osvUjLvNTZkDFIRJgQEBJCUlGTb+X19CQ9f0Bb7SJcjRaTV6NqjN7f86Q3KAqLYc7CSMxKjTmlifXh4OA899BCVu9aRvWY5dboEJSI20EiYiLQK6xd9Sbd+qUREd2bRtgLCnP6kJkSccnvXX389n+6qY4NfEnklVcQfHg1rrgVcRUQao5EwEfF5hYWF/OPxu/nv638hZ38Z+w9VM6JnNP5+p/4rzOl0Mnr8JBx+fmw/UNaMaUVEmkZFmIj4vBdffJHa6ipGXzKNpdsLiQ4NpF/XsNNuN8jfgXvleyz85190V5yItDgVYSLi06qrq3n22WfpN2QUh4JjKaqoZVjPjvg1cUmKxgTVlFCwbA65efnN0p6ISFOpCBMRnzZ79mz27dvH6CnTWL7jINGhgfTu1LSFWZvinCuuw3LV8PWH7zVbmyIiTaEiTER8Wk5ODr1798YkpNWPgiV1bPLCrE3Rs09/OvRIZsuCD3VJUkRalIowEfFpv/nNb1i3fgMrdhXXj4I18fFEJ2PAmMlUHdjD1vVrmr1tEZHj0RIVIuJzjiwTUV1ZQVBwCDn5hyiqqOW8lK7NOgp2xMhJPyI7ayXFLt9ajVtE2jYVYSLikyzL4s83X8zA4WOpHHw1kcEBXhkFA+jWOZq4C++iLMQ77YuINESXI0XEJ+3YsIqCvbsI7tqb/YeqGdIjqtnuiPwhPz9DfFQwWzduYPeWdV45h4jID2kkTERs1dAK9QCr535EoDOEkq6DCK110D/29NcFO5GESCcL3n6Y//Tpx83/94pXzyUiAhoJExEf5Ha7WLfgc3oOHk1eOQzqHnVaq+M3RY/oUEL7j+LbrCVUHCrx6rlEREBFmIj4oO3rVlBWcpDAPiMJ9PcjJT7c6+fsGBpIx5Qx1LldbFjyldfPJyKiIkxEfE5sz35ccNODFMckkxIXTpC/9+9aNMbQJyUD/4jOrJ3/X6+fT0RERZiI+JwOER0JSjsPP38n6QmRLXbe7h1DCOk3ih3Za6itqW6x84pI+6SJ+SLiU3K3ZbNry3rWBaXQq0tHwoMDWuzc3aJCCB8+lbOm30lAYFCLnVdE2ieNhImIT1n6yXvMeeEPVLvqGNSt5UbBAMKc/kRERrG/Uo8vEhHvUxEmIj7Dsiw2Lv2a0F6ZdO0YQWyEs0XPb4whLtLJllUL+Mudl1NdWdGi5xeR9kVFmIj4jO++3URJQT7+SZmkJUR45RFFjYmLDKbKbdi1aS05WUta/Pwi0n6oCBMRn7Fx6ddgDOF9htK3i3cXZz2euIhgnN2SCQgOZePSubZkEJH2QUWYiPiM/NxdBMX2I6V3NwIc9vx6iu4QSFBQEDH9hpK9bB51dXW25BCRtk9FmIj4jJQf30/nKx8jJS7Ctgx+xhAb4SSw5xkcOniA3JwNtmURkbZNRZiI+ATLstjwXQlx0RF0CrN3eYi4yGDcCRn0HzbOlnlpItI+qAgTEZ/wyqN3sW320yS3wCOKGhMfEYwjOJyJd8ygW99Uu+OISBulIkxEbOeqrWHrinn1jw7q3MHuOHQJD8JhDHuLqyguyOfQoUN2RxKRNkhFmIjYbvvGNbirK0lKH9Eiz4lsjL/Dj87hQWzbks3vfjyGOXPm2B1JRNogFWEiYruVC+eC8WPYmWPsjuIRFxlMaXAXQiM68tlnn9kdR0TaIBVhImK7rasXE5wwgL7dutgdxSMu0omFH91ShvHFF19oqQoRaXYqwkTEVjUuN47EIfQZPRmHn+/ciRgXEQxARJ8h5Ofns27dOpsTiUhboyJMRGy1o6CC8DN/zMSLLrc7ylGcAQ6iQwMhPg2Azz//3OZEItLW+NsdQETat6x16wj2jyI+MtjuKMeIjXSydV8H3n33PUaPHmV3HBFpYzQSJiK2qap1sfLFX1Hy+bM+uShqfEQwNe46UkadQ2xsrN1xRKSNUREmIrZ554uluA8VMmDQCLujNCju8Ojcwk17eOGFF8jKyrI5kYi0JSrCRMQ2b3/wKQBnjPSdpSm+L8zpT4cgf1bvLuGOO+7gnXfesTuSiLQhKsJExBZ1dRYrFi8gKLIznRN62B2nQcYY4iKdZOVVMmzYMObOnWt3JBFpQ1SEiYgt1u4pomT7WrqnnOGT88GOiIsIZl9pFZkjR7Ny5UpKSkrsjiQibYSKMBGxxRfZ+XS9/BHOu+pGu6OcUGykE4CYvoOpq6tjwYIFNicSkbZCRZiI2OIxeU2gAAAgAElEQVTrLQcYNWIYiX362x3lhGJCgwgJdFAV2Yvg4GCys7PtjiQibYTWCRORFrf/UBUr/vseV08aCkTbHeeE/PwMGd0iycorJz8/n7CwMLsjiUgboSJMRFrcgi37KZo3k++iy0hMG253nEa53BYb95by14XfEehffwHhrkl9bU4lIq2dLkeKSIub/eVCrOpyppx/tt1RmiQ2wollwbe79vDS/deTvWye3ZFEpA1QESYiLcqyLBbMr5/cPm7cWHvDNFHXiPrJ+cV1Tr5dv4ItqxfZnEhE2gIVYSLSor49UM6BbVl0SUgkLi7O7jhN4gxw0DE0kP3lLnr0T2f7+pV2RxKRNkBFmIi0qIU5B3AV7WXsWb65Sv7xxEY4ySupomdqJnu/3aT1wkTktKkIE5EWtXBbIcN++Xdee+kFu6OclNgIJ9WuOjr1GYRlWSxevNjuSCLSyunuSBFpdk99sbXB7beP783S7YVcmB5HSEhIC6c6PXER9Q/zdnTtS6/0oTgcDpsTiUhrp5EwEWkx674rYfcnL7D1w7/aHeWkRYYE4Azw40Al3PqnNzn77NZxZ6eI+C4VYSLSYlbsKKRi8wKs8oN2RzlpxhhiI4LJK6kEoLy8nNraWptTiUhrpiJMRFrM18s34C47yNkTxtkd5ZTERjgpqqhlU9ZyIiMjWbhwod2RRKQVUxEmIi3CsiyWLK5fH2z06NE2pzk1R+aFmajuuN1uvvnmG5sTiUhrpiJMRFpEUUUtB79dT4fwSAYMGGB3nFPSOTwIPwMHXf6kpqayaJEWbRWRU6ciTERaxN7iSvwjOnPJ5Vfi59c6f/UEOPzoFBbE3uIqRo0axdKlS3G5XHbHEpFWqnX+JhSRVmdvcSW9zp7GzJda352R3xcbEUx+aRXDRoygrKyM9evX2x1JRFopFWEi0iJyDxQzpHsExhi7o5yW2AgnrjqL+AGZzJgxgy5dutgdSURaKRVhIuJ1ZdUudn/5Ou/94ket/vJd7OGHeb+xthS/tAt5d2MZ/1qZe9wFakVEjkdFmIh43d7iSqq/20SPpET8/Vv3gzrCnAF0CPJnb3ElZSUH2bjka7sjiUgr5bUizBjjNMYsN8asNcZsNMY8cnh7kjFmmTFmmzHmXWNMoLcyiIhvyD1QQvW+HCa2sod2H09cpJO9JZWsnvsxrz50Mwf359kdSURaIW+OhFUD4y3LSgcygHONMcOBJ4CnLMvqDRQBP/NiBhHxAds3rwe3i9GjR9kdpVnERQZTXu2mc+90AL7NzrI5kYi0Rl4rwqx6ZYffBhz+soDxwPuHt78OXOytDCJiP3edxb6ctQCMHDnS5jTN48iire7IbgQ6Q9ievdbmRCLSGnl1TpgxxmGMyQL2A18A3wLFlmUdmZmbC8R7M4OI2KugrJrAhBSGX3EbnTt3tjtOs4jpEEigvx/7DtXSY0C6ijAROSVenSFrWZYbyDDGRAKzgf5NPdYYcyNwI0BCQgIFBQXH7FNSUtJMSdsu9dGJqX8adyp95HRXeF4XFpcRFNePi4aPafDP8ff39abmPndCeAB5xRX07p/MZ+/+HVNe2OA5pJ7+rJ2Y+qdxbbGPWuQ2Jcuyio0xc4ERQKQxxv/waFgC8N1xjnkJeAkgMzPTiomJabDt422X/1EfnZj6p3En20dVjoOe19vzdsO+rfj5d2+wne/v603Nfe6uUR3Y/m0hE8/5MUPH/4i6kI76WWqE+ufE1D+Na2t95M27IzsdHgHDGBMMTAI2AXOByw7vNg2Y460MImK/bWsWsev1X3Hgux12R2lWcZH188LKAyLoktCj1S9CKyItz5tzwmKBucaYdcAK4AvLsj4G7gV+YYzZBkQDr3oxg4jYqLrWzcEdG/F3htC1Rx+74zSrLmFBOIxhb3ElaxZ9xfzZr9sdSURaGa9djrQsax0wqIHt24Gh3jqviPiOfaVV1OzdTGzvFPwcDrvjNCt/hx9dwusf5r1v2QLWLZ+P9fzvNSImIk2mFfNFxGu+O1BMzf4d9EkZYncUr4iLDGb/oSq690uhvKSIbdu22R1JRFoRFWEi4jU52WvBqqNXyjGD4m1CfFQwdRYEJwwAYMmSJTYnEpHWREWYiHhNVVRPht7xPD1TM+2O4hVxEcH4GagIjcMZ0kFFmIicFBVhIuIVZdUuquoc9EsbQlBwqN1xvCLQ348u4U72lNbSY0AGe/futTuSiLQiLbJOmIi0P/kllRTPf5O6yMnQ3f6RsKe+2OqVdhOiglm5s4jrf/s8D0xO88o5RKRt0kiYiHjFjh3bKVnyLhV72/Zk9fjIYCxgf7nb7igi0sqoCBMRr9iRnQVAr+QMm5N4V1xk/byw3QWHuOiii/jrX/9qdyQRaSVUhImIV+Rv24AjMLjNLdL6QwEOP+LCA9l7qIbNmzfz+eef2x1JRFoJFWEi0uzKq12U7dlETNKANrdIa0O6Rwaxv7SaIWcMZenSpViWZXckEWkFVISJSLPbV1yO+1AB3fun2x2lRXSPDMICOvVKIT8/n127dtkdSURaAd0dKSLNrrDCTfytb3DhiHi7o7SI+PBAHH6GqqheACxdupTExER7Q4mIz1MRJiLNbv+hKqJCAukQ2jbXB/shf4chITKYLTVBjBs3juDgYLsjiUgroCJMRJrdulnP0SE4CEY+ZHeUFtM9OoQFOQUsnPUxCVEhdscRkVZAc8JEpFkdLK+haON8rEP77Y7Sonp0rC+8FuQUUFNTg9utdcNE5MRUhIlIs/omayvu0gMktpNJ+Ud0DA2ka7iTt2d/QlhYGCtXrrQ7koj4OBVhItKsPp+7EID+aYNtTtKyjDGM6RtDTnUHampqWLZsmd2RRMTHqQgTkWa1YsVyjJ8/Sf1T7I7S4sb07URlYBSdusSqCBORRjWpCDPGpHo7iIi0DSXuQGJSziQwyGl3lBY3qncMxkDX3ikqwkSkUU29O/KvxpggYCbwlmVZJd6LJCKtVVWtG3fqhYy9cJrdUWwRGRJIekIkOTG9+HbRFxQUFPDmmoMN7nvXpL4tnE5EfE2TRsIsyxoN/AToBqwyxvzTGDPJq8lEpNXZmFuEu86iU4cgu6PYZnz/zhRHp/Dgw49ijLE7joj4sCbPCbMsKwd4ELgXOAt4xhiz2RhzibfCiUjr8uKrr5H77E9w1rTfwfLx/TsT0CmR1AumER0dbXccEfFhTbocaYxJA64FLgC+AC60LGu1MSYOWAL823sRRaS1WLl8OVh1xMZ2tTuKbZLjwomNcPKf5VtIrMsDIu2OJCI+qqkjYc8Cq4F0y7JutSxrNYBlWXupHx0TEWF79lo6JQ3E4XDYHcU2xhjG9+/Mh6/8mfPOOw/LsuyOJCI+qqlF2AXAPy3LqgQwxvgZY0IALMt601vhRKT1KC09RMne7fRLbV/rgzVk4oAu+HXpw8GDBynYu8vuOCLio5p6d+SXwESg7PD7EOBzYKQ3QolI6/PpvMVg1TF82FC7o9jmqS+2AuBy1xES35+DwK5Na+kUn2hrLhHxTU0twpyWZR0pwLAsq+zISJiItG9HCo/lm8sIH3oJVVE9bU5kP3+HH7379mNvgJPdW9aROfEiuyOJiA9q6uXIcmOM5xqDMWYIUOmdSCLSGrnCY4kefx0JsV3sjuITenYOJ6Brb7ZnZ9kdRUR8VFNHwn4O/MsYsxcwQFfgCq+lEpFWZ3v2OiKiuuHv0NPQAJJiQokadx3pPVWUikjDmlSEWZa1whjTH+h3eNMWy7JqvRdLRFqT0sL9rH72ZvpddCuM6mN3HJ8QGuRPt76pFPlpwVYRadjJ/JP1DCANGAxcZYz5qXciiUhrk7Ox/pJb4oB0m5P4lsSOTnIWfsyGlYvtjiIiPqipi7W+CfQCsgD34c0W8IaXcolIK7J1/Rrwc9B3YKrdUXxKz05h/Pub15lfNJyUTN1MLiJHa+qcsExgoKVVB0WkAXu2riOwUyI/qvyAsN2u4+84NxrG/brlgtmsc7iTkIT+7N22we4oIuKDmno5cgP1k/FFRI5SV1dHwY5NhCb0J8xxggKsHTLGENcnhYoDeygtKbI7joj4mKYWYTFAtjHmM2PMh0e+vBlMRFoJyyLpqkfoddYldifxSf3T6lf3yVq9yuYkIuJrmno58mFvhhCR1qsOQ22X/iT16Ahk2x3H5wwePIQ5GHI2b2LMuIl2xxERH9LUJSq+Mcb0APpYlvXl4dXy2+8TekXEY9k3n1OxvYROKRdAVfO0OXz3Syf8fGn3G5vnRC0gLDyCMx+eTanlxLIsjNGSFSJSr0mXI40xNwDvAy8e3hQPfOCtUCLSesx7+wVKl71Pp7Agu6P4rL494iitclFYXmN3FBHxIU2dE3YrcCZQCmBZVg7Q2VuhRKR1qKys5OCeHILj+xPubOrshvbHWbqbA7P/wIYt2+yOIiI+pKm/Nasty6o5MoxujPGnfp0wEWnH1qxZg1XnpnPP5FZ5ma2xy57QPJc+g/39qNi6mOy1qxg7JPm02xORtqGpI2HfGGPuB4KNMZOAfwEfeS+WiLQGy5YtA6BH/zSbk/i22KS+OAICyd+2gYoaLeMhIvWaOhJ2H/AzYD3w/4BPgFe8FUpEWoeFS1fiCIuhW0J8k/Zfsr2Qpa6tXk7lexz+AXTtOZCCvBx2FlYwMDbc7kgi4gOaendkHfDy4S8REQB+et/jLIs5W5Pym6DXwHT2fvQ23+4rUREmIkDT747cYYzZ/sMvb4cTEd+2Ob+cwPAYokNVhDUmKWUI4XE92Zm7lzo9AU5EOLlnRx7hBKYCHZs/joi0FosWLeLVx2cQPvzHOPxa36T8lpY++hyC+ozgs435HDhUbXccEfEBTb0cWfiDTU8bY1YBv23+SCLSGnz22WfkzP+Qief/P++dxKrDYdXiZ7nws+owVh0GN53KtuCwanHU1eJn1WIZBy6/QFx+QbhNIBWBHal2hIGP3bHZLSoEy7LILaq0O4qI+IAmFWHGmMHfe+tH/ciYFgUSaccWLl5KQHQ34mJOclDcqiO8eh9RlTvpWLmLqMpdhNQWEegqI9BdTpC7jA7VB3BYNTishu8kzNg3q9HTuEwA1f5hVDs6UB4YQ7EzgbLATmCaelN48/v6zacoWLSAPXe+YFsGEfEdTS2k/vy91y5gJ3B5s6cRkVbBsixWrlxBUI+hdOrQhPlgVh3h1XnEVGwnPe9fhLiKPR9VOcIoD4yh2r8D1f5hlAbFUuvnxO0XiNsE4vILoM74YxkHFn7UGT82dzoPt18Adab+M2O58beq8a+rxt9dTUhtIX0LviDIVYbTfYio0t10K12NywRQ6ozjQEgfDgYntvhIWaAzmIq9W8nNL6TGVUegv30FoYjYr6mXI8d5O4iItB7btm3jUEkxHWP7EhMWeNz9HHU1JJSuplN5DgF1VbiNPznRE8iNGMzB4CQOBvegMiDqmGKosUVUt0ef1WjGQHeF57W/u4rw6r1EVn1HZNUeOlbuosI/ityIQRQGJ7XY6FiP/ulgWZTlbmFdbjGZiZpaK9KeNfVy5C9O9LllWU82TxwRaQ3y8/MJ7xxP0sB0gvwdx+5gWURXbiexaCkBdZUUBidSGNKLYmc3Fife0uJ5XQ4nB0N6cjCkJ1h1RFdsJ6F0DX0Lv6bSP4KdkSMoDu7m9Rzd+9UvaluTt5Ul3xaqCBNp507m7sgzgA8Pv78QWA7keCOUiPi2UaNGkXb3G6TFRx7zWZCrlKSiRURV5VIWEMPmTmdTHtjJhpTHYfwoDO1NYUgvOlbuoFvJKgYU/JfcsAz2RAzx6qhYSFgEnRISqd2fw+JvC7l9Qh+vnUtEfF9Ti7AEYLBlWYcAjDEPA/+xLOtqbwUTEd9VUlnLnoOVXHlGd2pcdZ7tHar3M+DAp4DFjsgR7Osw0NaJ8CdkDAdDelLs7E5i8WISDmURVpNPTvR4ah0hXjvtyAuuYkdhBat2F1FV68YZ0MBIooi0C00twroANd97X3N4m4i0M1VVVQzo24+a9EtJvvYM1uyun2QfX7KGgQc+odYRTHan86n2D/NahqY8eLup6vz82d5xDKVBXelZtIi0ff9mS8wkyoK88yvurEun062gjI/W5pG1p5jhPaO9ch4R8X1N/SfqG8ByY8zDh0fBlgGvey2ViPikp77Yyr0vfUhe7m78AoJZmFMAQLfi5UzJvoNqRygbO/3IqwWYtxSE9mV9l4tw+wUw8MCndKjO99q5Ih21uMuLWb27yGvnEBHf16QizLKsx4BrgaLDX9dalvUHbwYTEd+0e/NaACJ7DCA0yJ/EokVcnH0Xxc4EsjtfQI1/qM0JT11lQEc2dv4RtY5gBhz4L6E1Bc1+DrfbxRM/HYtZ9yGrdxU3foCItFknM1kjBCi1LOsvQK4xJslLmUTEh+3evI6A8Bji4uOJLt/GjzbfS2FIEu+nvODVuVQtpdYRysZOF+DyC2TAgU+ILt/WrO07HP7E9xpA3f4c1uwuwtJzJEXaraY+wPsh4F7g14c3BQD/8FYoEfFBc/+P4btfYt+GhQR07cMw9xqmbrgJCz/2RGSSkfee3QmbTY1/B7I7X4BlHFy68VaiKnY2a/vd+6Wxf0c2BaUV7D5Y0fgBItImNXUkbAowGSgHsCxrL9D6Jn2IyGlx19WRmtyPkH4juc79L5yuUq/fTWiXav9wNna6AICLNt1NkOtQs7XdY0AGtdXV1BzYyapdmhcm0l41tQirserHzC0AY0zrnfQhIqfM4efHqAunclNqLf1qs9kdkUmpM87uWF5TFRDJx/2fILz6O87d+huM5W6Wdnv0r1+01ezP0eR8kXasqUtUvGeMeRGINMbcAFwHvOy9WCLiiwpLyqkrK+A3/m9y0NmNvWHpdkfyuu7Fy9kVOZyeRYu4bMNN7Ik446jPl3a/8aTbjOoSz8svv8zHBR01OV+kHWvqsyNnGGMmAaVAP+C3lmV94dVkIuJzfvfKf3Af2s//+1ksuzuObfEHYNslP3QAoTUFJJRmUR4Qw8GQ07svyRjD9ddfT+kXW3nu6xzKql10CGrqv4lFpK1o9HKkMcZhjJlrWdYXlmX9yrKsX6oAE2l/3O46Nm3fy7CudfwjcCouh9PuSC3HGHZEncmhwM70PjiP4JqDp91kQUEBhWu/xFVVzro9Gg0TaY8aLcIsy3IDdcaYiJNp2BjTzRgz1xiTbYzZaIy58/D2jsaYL4wxOYf/G3WK2UWkBW3espmyajfEplAb3NnuOC3OMg62xEzEbQLoW/gVfnW1p9Xe+vXr+cOvbqX6u82aFybSTjV1Yn4ZsN4Y86ox5pkjX40c4wLutixrIDAcuNUYMxC4D/jKsqw+wFeH34uIL6tzs2z+lwB81eUaEoOa707B1qTWEUpO9DiCXcUkFS0+rbYyMzMxxhBSvJ11uSXNlFBEWpOmTkL49+GvJrMsKw/IO/z6kDFmExAPXASMPbzb68A86tcgExFftfxllm4rJDQ4CHd0EvGBi065qeZ87qMdSp3x5IYPplvpakpO487QsLAwUlJSKNmfw4bvVISJtEcnLMKMMd0ty9ptWdZpPSfSGJMIDKL+mZNdDhdoAPvQg8BFfJrfob3w9aNcN6YHy3pMJDqoEn/Tvld5zw0fRET1XnoWLSSqYieVQad2eXb48OG89c57UFxBYVk10R2CmjmpiPiyxkbCPgAGAxhjZlmWdenJnsAY0wGYBfzcsqxS8727qSzLsoxp+Le5MeZG4EaAhIQECgqOfYZbSYn+9dgY9dGJqX8a5/z6t1h1LnqP+wnVSweTFFJIjX+43bFst7HzZDK/e4MfbbmPjwc+ddLHFxQUkJycTMWhElxFeSzatIeRSZFeSOob9GftxNQ/jWuLfdRYEfb9+897nmzjxpgA6guwtyzLOnI5M98YE2tZVp4xJhbY39CxlmW9BLwEkJmZacXExDR4juNtl/9RH52Y+ucEts+DPXP5tv8tzF+zl8qaDPoEFhLoKrU7mU/Y1vEsBhR8RuaeV/mi94MndWxMTAzTpk3jnAsmc+4r2ewqtZjcxn8W9WftxNQ/jWtrfdTYxHzrOK8bZeqHvF4FNlmW9eT3PvoQmHb49TRgzsm0KyItpM4N/70fd1gCb28J4rqHX6bOVU2vIBVgRxQHd2dl3NWk5M+hT8FXJ318ZGQk/Xsn0TMmlPWaFybS7jRWhKUbY0qNMYeAtMOvS40xh4wxjf0mPhO4BhhvjMk6/HU+8DgwyRiTA0w8/F5EfM3qN2D/RsrPvJcly1cQ0zWO0GAncYF64PT3LepxC/mhA5i07VHCq7476ePnzJlD8bzXNDlfpB064eVIy7Icp9qwZVkLOfpy5vdNONV2RcRL5v7f/167qmH5ixCeQHVJIUsXzqVDn+H0dB7Cr30skt9kdX4BfNHnIS5bfz3nb3mA91Jfps4voMnHZ2VlkfXJP0joc6Em54u0M01dJ0xE2pPdS6C2AnpPYPveAg6WVlLVOZmezva5PlhjDjlj+aL3b4gt28iZu54/qWNHjBiBZVlU523VJUmRdkZFmIgcrbIYcldAlxQIi2Xlpp0AOGIH0FvzwY5rW8x4srpeRubet0g6uKDJxw0dOhSA6u82sV6Ltoq0KyrCRORoO+aB8YOkswC4dPwQHn3kQQJiutHTqSLsROYn/Zz9oX05d+tDRFTuadIxkZGRDBw4EEfBNo2EibQzKsJE5H9Kv4MDm6HbMAgKA8Df4aAosi+dgtzE+FfbHNC3uf2C+Kj/H7GMHxduvgd/d2WTjhs9ejQhjjpNzhdpZ1SEiUg9y4LtcyEgFLrVXyIrq6zm3ufeZ9GW/aRFVGI0Kb9Rpc54Pun7e2IqvmXStt/X92sjXnjhBR54/m32llRRVF7TAilFxBeoCBOReoXboCQXEkeBIxCAZZv28NqHC9mx/xDp4Vqaoql2Rw1nUY+b6V/wOYP2vt3o/sYYkuPqn0KQnadLviLthYowEQG3q34uWHBH6Jrm2bx4426MMQTFD2BIlIqwk7Eifjo5HccyZuczdCte0ej+f773Zg5+9TLZe1WEibQXjT22SETag6x/QEUhJE8Bv/rlAZdsL+STFdvo2CUWhzOUmqJcgvXPtmMM3/0SNf7hDT7KqSi4B1X+Wfxoy328k/oqRSGJx22ntroS1+6NbNyreWEi7YV+pYq0dzXl9Qu1hsdDdF/P5ro6iw3f5hES358eQWUE+7ltDNk6uf0C2dzpHOqMg4s33YWztvi4+44cOZLK/btY++3Jr7ovIq2TijCR9m7pX6FsH/Qcx/dn3heWlBHiDKS2ayp9nRqdOVXV/uF82H8GHar3M3nzr3DUNTzxfuTIkQBsXruKqloVvCLtgYowkfasvAAW/gX6/wgiEo76qFNUGE8++gsCkyfQL1hF2OnIC0/js74PE1+axaSc3zV4x+TQoUPxczioyN3E5n16MoFIe6A5YSLt2Td/rH880YSHYMOsYz7eWhWBMX7000jYadsaM4mIylxG7f4rJc4E4MmjPg8NDWXw2Zexw8TxzFc5pMZHAHDXpL4NtCYibYFGwkTaq8JvYeWrMPin0OnYv+hv+9N7fPjlUjr61xAdoEVam8OKhOms73wRw3NfhZV/P+bzq37+CB0HTeLAIfW3SHugIkykvfr60fr1wMbed8xH+4vKWL1lD/trgugTUmZDuDbKGL7udR87okbCf34BWz79wceGjgFu8g4ctCmgiLQkXY4UaY9yV8HG2TDmHgjreszHizfuBsAdm0qfYBVhp2v47peOer8/pC9Jru3w7tWQ/mMIj4Nxv+ZQUQHLHrmI6Ak3UDeqH356RIFIm6YiTKQ9mPt//3ttWbD2nxAQAu7aoz87bNGGXfj7+xPUtQ99gnNaMGj7UOcXAClTYc2bsOFfkHENAGFRMXTo2JnK3GyKK2rpGBpoc1IR8SYVYSLtzcFvoWQP9J4E/kEN7rJg/U46xifSIRC6OytBKyY0v8BQSLsC1rwB698D/yCG51aRnhTD0s0bCd/xH4aHH4C50f87Ztyv7csrIs1Oc8JE2hOrDrbPg+AoiM1oeBfLYviAbjgHnMWA4GL8dEXMe4Kj6kfEasph/b/wq6tlWL+uuMsOsi5PD/IWaetUhIm0J3lroaIAksZ6Hk/0Q8YYfvmzKZj0KSSHFLVsvvYoPA4GXgRl+fQt/IpBvWMB2LAt1+ZgIuJtKsJE2gtXFexcABHdIOb4a08dKC5jUUEIAMnBx3/MjjSj6N7Q9xyiqvYwMTiboRdcQUXXjIbWdBWRNkRFmEh7sXtp/cKsvSYc9XiiH7r6D//iroeeItxRQ0JgeQsGbOdiM9gTPpiulTk8PrKS6vDuHHQ1PGdPRNoGFWEi7UFlMeSugC4pDS5JcYTL7Wbxxl3UxfRiYHDRiWo18YLc8MHsD+lDRslc+m5+lU1FDV8yFpG2QXdHirQHO+bVj34lnXXC3dZvz6essgZnbCrJIboU6U1Lthceu9EYtnccTdG2fL6YM5tu4QaGZ7Z8OBFpERoJE2nrdi+DA5uh2zAICjvhrgvX7wQgKCGZ5GBNyreDZRxEpJ9PkAOc276Aai2WK9JWqQgTacvq6uCzX0Ngh/oirBHz1+2kQ1Q0CZ0i6BpQ2QIBpSHGGUanhB4s31UJG2fVL6orIm2OijCRtmzDLPhuVf1lSEfjq6/ffNFwOo67jtExZZoPZrNuvfqxKs/NoYK9kPMZulVSpO1RESbSVtVWwpcPQ2x6/YT8JohITMH0OYuxMYe8m00aldkvHsuy+E95CuRvgH1r7Y4kIs1MRZj8//buOz6qKn38+OfMTHollRBa6DX0Kh0ULCiKoqhrW9ta1139WXfX7667urquuusqdl07siioFGkKSJPeQktoISG992TO7487SMBA2szcmeR5v17zyjBz7znPHKY899xzzxEt1fr/QGEqTP3beaekOGXz/lTeWpuKhRrGRJGRO1YAACAASURBVEoSZrbJfaJod9fblAy4CdokwMFlcGKr2WEJIZxIkjAhWqKiDFj7EvS6DDqPadAu//xiLe+//Q6DwsoI87G7OEBRn5gAO9GRbdhdHAy9pxtrTc69GUpzzQ5NCOEkkoQJ0RKtegaqK+DCPzdoc601q3YcwRrfj4nRcjWepwjP2s6n771Fmd0H+syAonSYf6dxwYUQwutJEiZES3NyF2z9EEbcBZFdG7TLvI0pnMwpxL9jfyIqjtc9h5Vwu4iqTDJ2rGblrlRjjcmLn4NDy2Dti2aHJoRwAknChGhJtIalT0BAOIx7uMG7bT9wHICoTj3o5Cc9YZ5iTK8YQPHlZuP/h6G/hn4zYdWzxvxvQgivJkmYEC3J3q/g8GqY+CQEtGnwbjsPpWENCGV4x0AsMjWFx+gbXoVvbBfW7jxsPKAUXPYShLWH/91uLEclhPBakoQJ0VJUFMPSJ6Ftfxh6W6N2vfzqmcTe+AKDg2XQtycJtVURmdCHQ8kpVFRWGw/6h8HV70JRGnz9oMwfJoQXk7UjhfB2q541/qZ8D4UnoMtE+OH5RhWxvSyWgMg4BgQlOz8+0SwD+/bgh+TtpGYV8PMIv/ZDYdJTxjxwW/8LQ242MUIhRFNJT5gQLUFpDqRuMiZlDWvfqF2/WruX+V9+Q0/rSQIsNS4KUDTV9FG9iL7tdSKiY858YvSD0GUCLH4UsvabEZoQopmkJ0wIb6c1HFoOFh+jF6yR3l2xh8w9hxl+zSQXBCeaa0BYKQA78v2YcKrX85SYfnB8I7x/KQy+GSb/wYQIhRBNJT1hQni77AOQd9iYlNU3qFG7aq35YXsK/h0TGRoi01J4or6hZRTvXMb0O/5AaXnlmU/6BUPPy6AkC1JWmROgEKLJJAkTwptVlkLyCgiKhvghjd59//EsCgsK6NC1BxG2yvp3EG4X5mMnPjKE4qIiftx99JcbRHaF+KHGQu37Frk/QCFEk0kSJoQ3W/tPqCiEbheCavzHeeFPxo/6mD5xzo5MONHo/p1QFisrt6XUvUGXCRAcCwvugcI0d4YmhGgGScKE8FY5yfDjKxDTF8I7NqmIXXk2fNt2Y0rTdhduMjLGjm9cD5ZuPVz3BhYb9L4CqisdyxrJBRZCeANJwoTwRlrDksfA6tekwfinWAZdyci7/05Hv1InBiecbUibEvw7JrLjYCoFxeV1bxQYAZe8AEfWGD2kQgiPJ1dHCuGN9i+Gg9/BRX+FiqImFZFTrlmXE8xtnbJRMku+R+sVXE5kr+H0DSmhquY8vVwDrzfGCH7/HHSZBO0bP05QCOE+0hMmhLepKoMlj0J0L2OR7ib63X83c2TOnYwNzXJicMIVbBYY3bsdIWNvJirsPFfAKgWX/hOC28L8241VFIQQHkuSMCG8zdqXIf+YcerJ6tPkYlZuPYiPjw+j28r4IW8wJLyEpHwLS7cdO/+GAeFw1RuQexiWPu6e4IQQTSJJmBDeJPsQrH0J+l4FCeOaXExeWTUnUg7Qv28vWbDbSwxrU0rRtsVM+/0cUrMKzr9x5zEw5rfGkkZJX7snQCFEo8mYMCE8We0Z0rWGnZ8a90PanflcI81Zl4WuruSakQnNDFC42voUYxLdSns+gZ0TyQOWbT7ErRfXM95rwhOQvAoW3m/MIxYq05AI4WmkJ0wIb5Gx2zgN2WWCMVN6M8zfcBgsVm6/QH6YvYW/pYZu8VH4BYexbMvB+new+cLMt6G6Ar76Ddjtrg9SCNEokoQJ4Q2qSiF5JYTGQ9zAZhVVaVdkxQxl7CVXER7k56QAhTv0DCjEt9Mglm9Nxt6QpCqqO0z9m7Gk0cbXXR+gEKJRJAkTwhskr4KaCug+lebOJ7E+Nwg6DuVPNzZ9TJkwR8+AfHw7DSIrv4SdKScbttOQW6DnpbD8aTi525XhCSEaScaECeHp8o9Cxi7oMBKCY5pd3Ec7SrDmHmZ0RNPmFxPm6R1QQEC34Tz8+GP0T6jjlPS5xglGdAXr9/DfK+Ch3eAT4NI4hRANIz1hQngyezUcWAr+YdDpgmYXV6Nh/sKlpH3yBH4WGSPkbcJtlXQOU5wIH4DV2oivb99AozesNNvoERNCeARJwoTwZMc2QFmucRqyGXOCnfJTrj/5ydsYMaAnFot8/L1R/8Bc1h3M5TevfH3uJYzqEtHFuEpy4xw4uNx1AQohGky+hYXwVFkH4Nh6iOlj/IA6wXub87GXFvCrMV2dUp5wv/6BeZSXFDJnwXpWbktu3M5dJhjvp69+AyXZrghPCNEIMiZMCE+kNXzzEFht0HWy04pcvMmY2mD6CEnCvFWvgHxC2o8i39+fxZsOcOXYvg3f2WIzxhZu/QDenQp9Z9Z9ocdEmWlfCHeQnjAhPNH2T+DoWugyEXzPs1ZgI+wqDCDz4E66JnQipk3z5hkT5vG32BkSWUl4l0SW/HQArXXjCgiOMXrEcg5B+nZXhCiEaCBJwoTwNCXZ8N2TRo9F2wFOK3ZRRhhxV/+Bjx+f6bQyhTnGRhVR1WE4xzML2Hsks/EFxA+FNgmQvAJKc5wfoBCiQSQJE8LTLH0SKoph+ivNnhPsFK1h8ckwxrbTjOgW5ZQyhXnGRBYT0GUIYaEhHMvMb3wBShlXS1p8IGkh2GURdyHMIEmYEJ7k4DLY+Rlc8CDE9HJasXuL/Nm5cgE+exY6rUxhnn6hZURGtOG2//s3F4/o2bRC/IKh58VQnAFH1jo3QCFEg0gSJoSnqCiCr38LUT1h/P9zatHfpgVTuOlLilP3O7VcYY5Nh3PoF5DNd5mhrDmUw9pDWU0rKKoHtE2E4xugINW5QQoh6iVJmBCeYvnTUHgCrngVbM5b01Fr+GzzSezlRVx9QRN7TYTHGRaUTX5+AVc+9g7LNzUjue46GfxDYd83UFPpvACFEPVy2RQVSql3gcuATK11P8djEcDnQGfgCDBLa53nqhiE8HinlpnJPwY7PjEGTB9aYdyaaX2KMeD6eEUgybv3YLVaaRMd2exyhWdIDMrFP7QnuZV21u5IhuvHNK0gm58xPmzHJ8YapT2mOjdQIcQ5ubIn7H1g2lmPPQas0Fp3B1Y4/i1E61ZTBQcWg384JDh/Ue2NxTGUHdpE/+4dCApwXg+bMFeApYb+gQUEdR3Cxt1HqKpuxuD68I7Qfjikb4OcRk4AK4RoMpclYVrr1UDuWQ9fAXzguP8BMMNV9QvhNY6shbI86DENrL5OL359bgih4eFMGSITtLY0Q4OzUV1GU1xWwZqdR5pXWMI4CIo2DghKz/7qFkK4grvHhMVqrdMd908CsW6uXwjPUpgOqZsgbgC06ez04tMqA0gjinvvuY2rJg50evnCXIODsgnoPBCrzcbX6/c1rzCLDXpdBlWl8O3vnROgEOK8TFu2SGutlVLnnOpZKXUncCdA+/btyc7+5TpnBQUFrguwhZA2Oj9T26emkvD9S1C+weR3vBRd7e/U4ittVazPb4u9vJiBYeVU2kIByK4OrHPbc6m2OmfG/pbMrDYKtEGPsBpsk65nzLCgOv9vG8U/gYAOEwnaM5/C+HFU9pjunECR76L6SPvUryW2kbuTsAylVJzWOl0pFQecc6pnrfWbwJsAQ4cO1VFRdU8wea7HxWnSRudnWvt8/xyUZkDfmUT624FSpxbvW13IurQYUv99A5tvmsxlY/oDEGXzqXPb+soS52dWG40IOsnBQbMY1HcfUTYnvIc6DwF7IaGrn4Z+UyG0XfPLdJDvovOT9qlfS2sjd5+OXAjc7Lh/M7DAzfUL4Rky9sLqf0BMH4jq7poqKv3Zv2c32l5D785tXVKHMN+okAwUmtc3l7BqmxMG1SsLXPmGMV3FgvuMOU6EEC7hyikqPgUmAFFKqVTgT8BzwFyl1K+Bo8AsV9UvhMeqqYYF9xpzM3Wd4rJqNhbHULp/EXHRbegS37KOHsVpEbZK+gbk8dYH8/i25iR733+o+YXunAudx8DB7+CTWdBu8C+3mfh48+sRopVzWRKmtZ59jqcmu6pOIbzChtcgbSvMfAeyD7qsmrVZAVQc28mkiwajaq1BeWr+MNFyjAnNYH23C0haNoeko5n07hTT/ELjBhnvz+RVEN4ZAiOaX6YQ4gwyY74Q7pS5D1Y+Az0vgX4zXVbN4RJfkvbuQ9trmDjYNac7hecYFpRFeM8RAMxfs8c5hSplvE8tVmM2fW13TrlCiJ9JEiaEu9RUwZd3gW8QXPay8SPnIl+ltyGgUyL3zJ5KLxkP1uIFWmu4pKsPgfE9+eKH3c4r2C8Eul8ERWlwbIPzyhVCAJKECeE+a16E9O0w/WUIcd0UeVrDgvRwEmOs3Di5HxaL65I94TmuapeHX8+xJB3L5mRukfMKjukD0b3h6FooOum8coUQkoQJ4RYntsIPz0P/WdDnCpdWtbMwgKS9SQTuX0R1jZxCai3GRhbRZdhEZv7xddpGhDi38O4XgU+gcVrSXu3csoVoxSQJE8LVqsrgy7shOBYued7l1X2VFk7xT/NZ+90irNIL1mrYLHB913LWF8dyvOyXc8E1i0+AMT6sNBsOr3Zu2UK0YqbNmC9Ei7fqWeNv8grI3g/9r4UNc1xaZbUdvkyxUHZkOzOnDj3jqkjR8l0Xn8uL60u44N7X+ObJy0jsGue8wiO6GFdMpm6CyG7OK1eIVkx6woRwpfxjkPoTtBsEEQkur25NTgjHd21E2+1MGd7T5fUJz9IuoIoJHX04fvQoH6/c5fwKuk4E/3DY/y2UyyoKQjSXJGFCuEp1hfFj5R8OXSa6pcrPUiOo3P8DPTtG0619tFvqFJ7l9j7V+HcawAfLd6GdPdu91ddY5Lu8EJY+4dyyhWiFJAkTwlWSVxg/Vr0uM368XCyzwsaydH+Cawq5flKinIpspcZFFdF+wBgysnJYt+eY8ysIaw8dRsK2D2H/YueXL0QrIkmYEK6wfwmc3AkdRhg/Wi62PiWHl3b5Ybf68a/Hb2biyP4ur1N4lvUpOaxPyWHT4RyuGBqP8vHj5W92uqayzmMgtj8svB9Ksl1ThxCtgCRhQjhbSY7x4xQUbfxYuYHWsLKgLd0sJ2nvV4bNZnVLvcIzXRyTS+QF11IcO8g1FViscNUbUF4AXz8oi3wL0USShAnhTFrDN7+FsjzjNKTFPRcg7ysP49jRY6x58R62H0h1S53CcwVaa7h66igOxl9MermTp6s4JbYvTHrKmDts20euqUOIFk6SMCGcacv7kLQQJj1pzAvmJsvy4ynfswwLmu4dnbB4s/B6F4enUlVSwCMLjriuklH3QcI4WPQwpO9wXT1CtFCShAnhLJlJsOQx40rI0Q+6rdoTZT6szwulLGkN4wd3I8jf9RcBCM8X7VNO1N7P+fjN1zmQUeyaSixWmPkuBETA578yeoCFEA0mSZgQzlBVBl/caix4fOUbYHHfR+u/xyIpObCeivIyLr2gn9vqFZ7vT1f2A23nkbl7XVdJcDTM+i8UpsH8O8EuS2UJ0VCShAnhDEseh6wkuHKOSxfnPltJtYVPUyNg19e0jwlncM8ObqtbeL5o/0oiE3qzeOU6Vh7I/fkKSqfrMAymPQsHv4PVLzi/fCFaKEnChGiuvQtgy3sw+n7oNsWtVc9Pa0NhtY0HZ0/hkRunYJG1IsVZrh7fj6qCTN7ZXOTaiobdDonXwffPwoGlrq1LiBZC1o4UoilOrQtZmgtbP4CQOLD6n37cDWo0vHs0igGhpUyKCUSpTm6rW3iP2SPa8d4Xoazcn89dw0PwsbhoOgml4LKXIHOvcWr+tsUQN8A1dQnRQkgSJkRT1VTCnvmgLNBnhjFI2Y2+PRlGcgH02fYyKRO60zU+yq31C+/g62Pj7394gJfzRrKqcD8Xhac5p+BzHXB0Hgt5R+CTa+H25W6ZrFgIbyWnI4VoCq2NJVtKc6D35eAf5tbq7Rr+kxJD8OGVLF21jvyiUrfWL7zL8MgyevrnMz8jjkq7i7/2/UKg39VQWQIfX2NM6CqEqJMkYUI0xYnNxkD8hHEQkeCyak4NpK59A1iWGcq+In/Kty6gX0KsDMgX56UUhGz9gD1zHmBxjhsuHAmOMa6YzD4Ac2+GmirX1ymEF5IkTIjGOroOkldCZHdjIWM30xpeTYkhPHMbh4+m8uBVo2WxblGvMd1CqSnK5qN1xyipdsNXf9eJMP0VSFkFX94N9hrX1ymEl5EkTIjGyD1sTEoZ0MZYlsiE5Oe13bCrMJCqzXMJC/anW1fpBRP1G96nE+3aRpO16VvePRLpnkoH3QhTnobd8whe9YTMISbEWSQJE6KhyvLgk1lgrzbGvNj83B6C1jAvJ4FoWylDOwZxw9Rh+Pm6aG1A0aIopbjxwgFUZiTz0tpscirddCHJmIdgwuP4J82DRb+Xxb6FqEWSMCEaoroS5t5k9IRd9zEERpgSxuaSKA5XhDAz8ii/uWoMN1483JQ4hHeaNrIPwUEBZGxYyMuH3DepMOMfpXTw3bD5XWNiY0nEhAAkCROiflrDtw/B4dVw+b+h8xhTwrBr+CIngajKdFTKOrT8kIlG8vfz4S93XsIdN83ik9RIDhW7qTdXKUpHPQwj74GNrxuJmJyaFELmCROiXmv+Ads+gvGPwsDZpoWxoTiG45XBdN31Bo+vWMXnz9xG+9g2psUjvNOIvp35VftKlq+289yBON4efMQ1FZ09j1h1IPiGQPxQIxE7uhbu+B6s8jMkWi/pCRPifDa9BSufgf6zYMLjpoVRrRVf5CQQZ89g448/MnFID0nARJNlpKVRPf9RFh8s5fusYPdVrBR0nQydxsDJXTDvVqiucF/9QngYScKEOJftn8Cih6HnJTDjNVOuhDxlVUEcJ6sCidr7OSVlldx0yQjTYhHeLzw4gMPJB2HL5/wxKZ7yGje+t5UyTul3nQxJC+HT64yJXYVohSQJE6Iue76CBfdCwni4+j2wmncFYrndwvzcznThBD+sWs3oxC706BhjWjzC+7WLCuXXFw8lc9tKktPz+E+KCe+n9sPg8lch5Xt4/zIoynB/DEKYTJIwIc52cBn873ZoPxxmfwo+/qaGsyS/A/k1foy1byXQ34c7Z1xgajyiZXjyhgnYrIqwre8z53C0+wbp1zb4V3DdJ5C1D96eAplJ7o9BCBNJEiZEbUnfwGfXQ2wfuGEu+AaZGk5RjY2FeR0ZEpTFtJ7BfPHs7dILJpwiPjqM+2aMYv+WH7HkHuXh3e2pNuOCxZ4Xw62LoKYC3plq9IwJ0UrIZSlCnLLzC/jyLmg3CG6c5/ZFueuyILcT5XYriXnfUxkdjq+PfGSF8zw6exxtI4LpNKKah/cF8drhGB7omum+AGpfQdn3Ktg9Dz68EnpMg7aJxuMTzbsgRghXk54wIQC2fADz74COo+Cmr4xliUx2osyH7wriGVi5k7/++yPe+HKt2SGJFiYqLIjfzxrL1Z3KmBGXxyvJsewoCDAnGP8wGHgDhHeE/YuMeflkLjzRwslhtRDr/wNLn4BuU2DWh+AbaHZEALycbMxonr7yA3ysFmZfNNTkiERLsT4l54x/r92ezKGtHxE95c88uLMjC0YeJMzHhHOTNn/odw0c/A6OrYPyfBj7O9PHZQrhKpKEidbLXkPQmmdgx3vQ+3KY+baxHuTZk0ya4ECxH/870Ya+Wd/xzY4D3H3VGKLC3Tifk2hVSisq+XbdXp4aOI9PQ2/g97s68uagI1jMmJXFYjVORwaEw+Ef4MMZcO3HEOSmRceFcCM5HSlan1XPwvI/w2sjCdjxnjGDd3QvWPNPj0jAtIY/72tHsKpg15JPaRcdxrUXDjE7LNGCXTi8F6P7duStT7/hoQ7JLM8KNWfailOUMoYG9L4CTmyFtybAyd3mxSOEi0gSJlqfylLY+RlkH6A4YZpxGlJ5zkfhu8xQ1uaEcFtMMgE+Vh6YNQE/GZAvXEgpxb/un05WQQm7l37KFXF5/PNQLMszQ8wNLKY33LoYaqrgnQth7wJz4xHCyTznl0cId8hMgm3/heIM6DOD8najzY7oDOU1imf2x9EzuIz7Emt468nrGTeom9lhiVZgSI94HrhyNHMWbuSGgJ/oF1rGgzs7klRk8nis9kPgzu8hti/MvQlW/lUW/xYthhxei5blfKcTsw/Avm+M2e8HzIbQeKh2X2gN8eaRaI6V+nLpiTcp6DcAq0WOk4R7rE/J4bKJg4mKbkO1xcbdkdv4c8Vwbt/ama9GHiLaz6QPy6nPdMJ4Y53J1c/D7v9Br8vAJ0CmsBBeTZIw0fJpbVxpdWQNhMQZ8xH5mXyapQ4Hi/14NTmGzsnzeP1/XzO0nQ+9eyaYHZZoRQL9fZk0tCcAtvICHojZzv+lDub6DfE8Fb8dX0vdPVCjurhh0LzFBj0uhuC2kLwctrwHfa90fb1CuJAcZouWrboC9n5lJGAxfWHA9R6ZgNVoeGR3e6x5R9n09cdMG96DW6fJYHxhjm0HUrnq0bfIO7KXe2KTOFgexpuZPc2ftkspiB8MA280/r3tI9j8rswnJryWJGGi5SrOhK3vG6chu0w0Tl+YuBD3+bx7NIptOb6UL/47IYF+vPf/ZqKUGfMDCAG9OsUSFR7MX95ZTG/LcWZFpvBjUVu+yutkdmiG0HYw5FYI7wTfPATzboOyPLOjEqLRJAkTLVP6DmMAfk2V0fvVYYRxFO2BdhcG8MLBtrTZ/j5HjqXy7iMzaRvheb11ovUI8PPhT3dcQk5hKc+8t4TLw44wJuQkc3O6sLEo2uzwDD4B0P8amPxHSFoIr4+BI7KqhPAukoSJlqW6whh8f2CxMfB+yK0Q3sHsqM4pv9LK3ds7Eelbzce39eP1317BZaN6mR2WEPTu3Jb7rhnP2u3J/HfRBu6I2U93/wJey+hNSrmHTBysFIz9Pfz6O2Oi5fcvg+VPQ3Wl2ZEJ0SCShImW49hGY7Buxh7odAEkXgu+QWZHdU52DQ/t6kBqRi7/7neYvnFB3H35CLPDEuJnsyYPYurI3hSXVeCjavhd3C5CrVX8Iy2R3Gpfs8M7LX4I3LUaBv8K1r4Eb46H1M1mRyVEvSQJE96vpgpW/Q3emwZoYxHgzmM9agLWs2kNf9sfx7LkMvI/+R2vvfOJ2SEJ8QtKKf5w28XcP2sCSinCrJU80m4nZXYr/0zrT6Xdgz5jfsFw+b9h9mdQlg9vT4Elj0NlidmRCXFOMkWF8G7pO2DhA5C+3Zj7K7itcVrCw71+OJo39vlR/uXvUDWV/P6aMWaHJESdLI4FJA8cy+TZ95fy199czr1tA3gxvT9vZfbkntgkcwOsa27AxFnGupMbXoPtH8OMOdDzYo8dFypaLw86jBGiESqKYemT8OYEKEyDa96HK+d4RQL24bEIntsdRvWCP1Kcm82Cv/yKvgmxrE/J+cVNCE/hY7OSll3IQy//j87VR5gVmcLaorZ8ndfR7NB+yeYP3afCgBuM+cU+m20sBJ6x1+zIhDiDJGHCu2gN+76F10bB+ldh8E1w3yavmbTx9ZRo/pDUHr3kb2SnpvDpU9cyboBMyCo8X0K7SP7xwAxy8ou574W5XKD2MCo4g89yurAyy0Ov5g3vAENug4ufh7TtMOcC+OZ3xvQ1QngAScKE9zj+E7x3CXx2PfgGwq1LYPorENDG7MjqZdfw7P62/P1gHNPb5vP5faP54k/Xc+XYvmaHJkSD9e8Wzz9/O5Ps/GLu/8dcrvbbTCe/Yh7Y0ZFDxR7aC22xwoi74IFtMOwO2PI+vJwI3/0BSrLNjk60cpKECc+XtR8+vxHemQI5h+DSf8Lda6HTKLMjq9f6lBxWHsrn2h/jeHW7nbg9H3Jd8DaUfwCx7WLl1KPwOond43npoZkktIskKsSXh+N24W+1c+vWzqSXe+ZkyAAERsAlz8O9m6DP5UZP+suJxpQWxVlmRydaKUnChGfSGo6ug0+ug/8Mh+RVMOEJx9Hsrz125vuzpVcG8Kfjg1m7L4OCj3/L3lULyC8qNTssIZqlf7d4nrv3Cnx9bFjL87i55lvyq2zM/qkLGeUefr1XVDe46k24Z6MxWH/ty/BSX1hwH2SafJGBaHU8/NMiWp2qcmOy1Q2vw4nNEBAB4x+F4XdCUJTZ0TWY1vBFWhueOtqbws0LyFr1X+Kjw/j7fVcTERpodnhCOM0Hizbx+bIt3DQjhZ963cfsn7rywdAUOgRUmR3aaXVdQQkQ2Q2G3W581+yaB9s+hK6Tjce6XwRW+YkUriXvMOEZ0nfA1g9h11woL4A2neGSfxhzfvl6V9JystzG00nxLMkMo/Kbv5CxZyPjB3XjyVunERzooeNmhGii31w1hogAG69/tZJ+PZJJnfQo09d355XEY4yPKjY7vPoFRhpXUnYeB2nb4PhGSF5hTPQc2x/aJhqnMgEmPm5urKLFkSRMmENryNwLexfC3gWQlQRWP+g9HQbdCAnjwXLW2fJzHc16iEq74qPjEbx4IIYqrXisRzrHhoVTnjiRqycNkgW5RYvk62Pjtd9ewbjEztzzykJK332AfrMf45aqEdzeOZv7u2QQ6mM3O8z6+QRAp9HQcSTkJMPJHUZCdnwDhMRBdC/IP+7Ry6AJ7yNJmHCPVc+CvQYKUyE3BbIPQlmu8VxYB6PXq//VXnGl49mq7fBVehteTo4lOfkw1T+8wCMzBnF3wiDW635mhyeEW1w3aQDjEhP4f28u4bnL4T9pubyxz595qT25v1smk2LLifKGXxxlgajuxq2iyFgGLSsJUlbBy/2g/TDoMQ26TTF6yc4+WBSiEbzhIyG8ldbGEeWR1bBnPuQdgZpK40surKPxZRbVHXyDjUvFN8wxO+JGyam08llqBB8fj+TI0VQq1/2VnANbiAgNpKqyl1zxKFqddlGhfPTELACm5+7g8/mfcswSxhMX3EJYx96MCTnJXb3KGBpeisUbOob9QoyesY4joSwPQtoaPfcr/2LcNvCDVwAAEMVJREFUgmKg22RjmbROo6BNgszKLxpFkjDhPPYa4xTj8U1wbD0cWQtF6cZzfqEQ0wciukB4J6+Y2b4uhVUWVmWFsuBkOKuzQ6jWioB1r5O+5luCA/y444rRzJoymKAA73x9QjhLjV0zY0wvPvh2IxmfPEZNhy4sGnwVy/MuoG0gXBKbz2VtCxjkLQlZQBsY+zvjVpQBySvh0DI4sAR2fGpsE9zWSMbih0DcAKOnLCDc3LiFR5MkTDRNdSVkHzCSrow9kLYVTmyFSsdA3KAYSBhrHCEmjIMdn3vtEeLC/SVsKYlkS3EUSWXhlOecwL5vPpeMH8zF8WUcLfPlUPQYZowfQGiQv9nhCuERbFYL10wezPQx/fnmx918vmI7Jxb8g+uuP05Vr2l8eCSUd49GEelTwZXxRVzatoBBYaXe8TUREgsDZxs3ux2y9sGxdbDpbTi0HPZ8eXpb/3AIjjV60YJjYerfIDjavNiFR5EkTJxfTTUUHDfGcGXuMRKujL2QvR/s1cY2ygJB0RDVA0LbQWi88cWjFBSdhJ1zvSoBs2vYWRDAiqxQlmWGklToS8WJJGxH5lOWvJHcjHSUgs59yohP6EV8YhdGJ3YxO2whPJK/nw9XTxrEpVPGsnX7Tgb3jCXAbzfvL97CvFU78ek5jDkdRvF2h0TaB8OlbQuYGlPAwPBSrN7wtWGxQGwf43Zq0tfKEijOMG5FJ42/2fuN53bNhcAoiO5pfGdG9YDoHlisMRAZ6VXflaL5TEnClFLTgFcAK/C21vo5M+Jo9VY9a4zbqi43poUoz4ey/DP/VhSBrjm9T1gH47Rij4sgtp9xf/d8Y2kQL3ay3MbqnBBWZ4fwY04weVU2LGiGtinhqqBdvPLpU1iUIrFbPLdMnsT4wd2JDg82O2whvIbVYuGCWgcr3duF07NdGFt+Wk7l+qX845kn2OPfj/eORvLmkWjCbNVcEFnM0DYlDA4rpUdwOYE2beIroOFXaPsGGUMvImodnFWXn07MSnIg7yic2GI8DkQAWHyMKTM6joTwjmfewjqAn3zntDRKa/e+qZVSVuAAcCGQCvwEzNZan3N5+6FDh+rNmzf/4vHs7GyiorxnAk+3qqmGsjzy0pJp46ehJAsK06AozfhbmA4Zu43Th6d6tE6xBRjjGPzDjXEQ/mHGPDlB0WDz/tNt5TWKvUUB7CwIYFN+CPuKfEkpMV5XuLWC/oG5JAbmMSAohxCr0Tabk47Sq1PbVjnPV6UtFN/qQrPD8GjSRvU7VxuVV1RRWVzIRUO7o5SioMrKmpxgfnAcEKWV+/68baStnDifUuJ8S2nrU0YbWwWjOwQQ7VdNtG8VITa7d3UkaQ1VpVCaQ3FREcEVaVCaaxzU5h+Hmooztw+MNJKx4Fjje9w3EHwCjaTPJ/D0zeYHU/7U4nrVvOk3Xym1RWs9tN7tTEjCRgFPa62nOv79OIDW+pyHGB6ThGlt3NCg7Q247/g3GH9rqoyEp/bt58dqwF7r+ZpT2zgeq640PqxVpVBZevr+qX9XFBlTPpTmGn/LC+p+DVZfY86b0HZGb5dfiHF05Rd6OuHygkTLrqFaK+waarSiRoNdK0pqLBRVWymuNv7mV1lJK/chtcyX1DJfTpT7cKzUj2ptfDlF+lYzKKyUYW1KGBdVRF7miZb2vdVskmDUT9qofk1to5wqPw6Vh3KiKpD0SuOWVhVImf2XJ3JsShNkrSHYZifEVkOQzU6g1Y6/1Y6/RRNgtRNgteNvseNv1T/fD7Aa/z5939jez2LHz6Lxs2p8T9232LEp5+c32dWBRNkcS5pNfNwYa1aSaSRj+Uch/5hxKzhuHFTnphjf/bXPVNSmLOAbAv6hju/5U39DHMmav/Fdb/M/877NHyw2IxG0WEHV/mszTr/+fN/xuLIYDaKUcR9V67E6/q0sp2P8xTbn2k+Rk5tPZGRk/ft5wJd4Q5MwM05HxgPHa/07FRhhQhynLfsjbHrrHAlUrcTLk1h9ax35BBgfrMAI4xLpwAhjuZ8TWyi0hBHqZzWOmHxDjG094A3aGHNPtOGPe+ONhAtFjW58/JG+1bT3r6RXcDnTYgpJDCulOj+NYH8//GoKQUN+ltc1jRAtXqRPBZE+Zy6wrTUU223kV/sSHxNNVoWNrEobeZU2SmospORVUWa3UVZho1BbqLBbqdQW42a3UqEtVOnmD6GwoLEo4y/KWIx5TGQxbw8+0ryCz3XaMzjWuJ2itdFbVlVmjEM7dWBeXQHthxoH5+WFUOG4nUreqsuNfSqKHGdCPOz37RwiG7V1XUmhI0G75VuIH+yaIBvJYwfmK6XuBO50/LNYKbW/js2igGz3ReWVpI2Ao8DWup+S9qmftFH9pI3q1yraaD/wTtN2dXL7LHBeUZ7DOW301JDmR1K/Tg3ZyIwk7ARQe92H9o7HzqC1fhN483wFKaU2N6S7rzWTNjo/aZ/6SRvVT9qoftJG5yftU7+W2EZmrLfwE9BdKZWglPIFrgMWmhCHEEIIIYRp3N4TprWuVkrdByzFmKLiXa31HnfHIYQQQghhJlPGhGmtFwGLnFDUeU9XCkDaqD7SPvWTNqqftFH9pI3OT9qnfi2ujdw+RYUQQgghhDBnTJgQQgghRKvnsUmYUmqaUmq/UuqQUuqxOp7/nVJqr1Jqp1JqhVKqU63nblZKHXTcbnZv5O7R1PZRSg1USq1XSu1xPHet+6N3j+a8hxzPhyqlUpVSr7ovavdq5ueso1LqO6VUkmObzu6M3R2a2T7POz5nSUqpfynVMmeha0Ab3a2U2qWU2q6UWquU6lPruccd++1XSk11b+Tu09Q2UkpdqJTa4nhui1Jqkvujd4/mvI8cz3dUShUrpR52X9ROoLX2uBvGgP1koAvgC+wA+py1zUQg0HH/N8DnjvsRQIrjbxvH/TZmvyYPap8eQHfH/XZAOhBu9mvypDaq9fwrwCfAq2a/Hk9sI+B74ELH/eBT27WUWzM/Z6OBHx1lWIH1wASzX5NJbRRa6/7lwBLH/T6O7f2ABEc5VrNfk4e10SCgneN+P+CE2a/H09qo1mPzgC+Ah81+PY25eWpP2HDgkNY6RWtdCXwGXFF7A631Kq21Y40HNmDMNwYwFVimtc7VWucBy4BpborbXZrcPlrrA1rrg477aUAmEO22yN2nOe8hlFJDgFjgOzfFa4Ymt5HjKNSmtV7m2K641nYtRXPeQxrwx/hB8QN8gAy3RO1eDWmj2msVBXF6evYrgM+01hVa68PAIUd5LU2T20hrvc3xPQ2wBwhQSrXEBWyb8z5CKTUDOIzRRl7FU5OwupY2ij/P9r8GFjdxX2/UnPb5mVJqOMaPRLJTo/MMTW4jpZQFeBHwrm7txmvO+6gHkK+Umq+U2qaUekEp1fx1YDxLk9tHa70eWIXR05wOLNVaJ7koTjM1qI2UUvcqpZKB54EHGrNvC9CcNqptJrBVa11Rx3PersltpJQKBh4F/s8NcTqdpyZhDaaUuhEYCrxgdiye6Fzto5SKAz4EbtX61CrjrVMdbXQPsEhrnWpeVJ6ljjayAWMxEtVhGKcRbjElOA9wdvsopboBvTF6xuKBSUqpseZFaC6t9X+01l0xfiyfMjseT3S+NlJK9QX+DtxlRmye4hxt9DTwkta62LTAmsFT145s0NJGSqkpwJPA+FpHByeACWft+71LojRPc9oHpVQo8C3wpNZ6g4tjNUtz2mgUMFYpdQ/GWCdfpVSx1voXg0W9XHPaKBXYrrVOcWzzFTCSJi+b55Ga0z5XAhtO/TAopRZjvK/WuDRi92tQG9XyGfB6E/f1Vs1pI5RS7YEvgZu01i3xrAU0r41GAFcrpZ4HwgG7Uqpca+0dF1SZPSitrhtGcpiCMVjz1CC9vmdtMwjjNFr3sx6PwDg33MZxOwxEmP2aPKh9fIEVwG/Nfh2e2kZnbXMLLXdgfnPeR1bH9tGOf78H3Gv2a/Kg9rkWWO4ow8fxmZtu9msyqY2617o/HdjsuN+XMwfmp9AyB+Y3p43CHdtfZfbr8NQ2Omubp/Gygfke2ROmz7G0kVLqzxgNvxCj2z8Y+MJx5fcxrfXlWutcpdRfMNaoBPiz1jrXhJfhMs1pH2AWMA6IVErd4ijyFq31dne/DldqZhu1Cs38nNU4LgVf4Zh6YQvwljmvxDWa+R6aB0wCdmEMIF6itf7ajNfhSg1so/scvYVVQB5ws2PfPUqpucBeoBojia8x5YW4UHPaCLgP6Ab8USn1R8djF2mtM937KlyrmW3k1WTGfCGEEEIIE3j9wHwhhBBCCG8kSZgQQgghhAkkCRNCCCGEMIEkYUIIIYQQJpAkTAghhBDCBJKECSFcRinVVin1mVIqWSm1RSm1SCnVQyllUUr9Sym1Wym1Syn1k1IqoY79fZRSzymlDiqltiql1iulLm5iLDMca142Zd9wx+S953q+Rim13fF6vlZKhTenPCFE6yBJmBDCJRzzh30JfK+17qq1HgI8jrEw+rVAOyBRa90fY4b5/DqK+QsQB/TTWg8GZgAhTQxpBtCkJAxj0szzJU1lWuuBWut+QC5wbzPLE0K0ApKECSFcZSJQpbWec+oBrfUOrfUajMQqXTvWLdVap2qt82rvrJQKBO4A7teO5YC01hla67mO52c7etF2K6X+Xmu/YqXUX5VSO5RSG5RSsUqp0cDlwAuOHquuSqk7HD1wO5RS/3PUh2P7Lx2P73Ds+xzQ1bFvfevUrsex+LBSKlgptcLRi7dLKXWFY5tflKeUesQRz06llFcuRiyEaBxJwoQQrtIPYyb9uswFpjuSkBeVUoPq2KYbxgz0hWc/oZRqh7Gg8SRgIDBMKTXD8XQQxrqNA4DVwB1a63XAQuARR49VMjBfaz3MsV0S8GvH/v8CfnA8PhjYAzwGJDv2feRcL1gpZQUmO+oCKAeudPTiTQRedPQQnlGeUuoioDsw3PF6hiilxp2rHiFEyyBJmBDC7bTWqUBPjNOTdozljyY3oohhGKc5s7TW1cDHGMtxAVQC3zjubwE6n6OMfkqpNUqpXcANGGsZgpHYve6Is0ZrXdCAeAKUUtuBkxinW5c5HlfA35RSOzHWkox3PH+2ixy3bcBWoBdGUiaEaME8cu1IIUSLsAe4+lxPOk4xLgYWK6UyMMZsrai1ySGgo1IqtK7esPOo0qfXY6vh3N9z7wMztNY7HOuoTmhEHWcr01oPdJzSXIoxJuxfGMldNDBEa12llDoC+NexvwKe1Vq/0YwYhBBeRnrChBCushLwU0rdeeoBpVSiUmqsUmqw45QiSikLkAgcrb2z1roUeAd4RSnl69g2Wil1DbAJGK+UinKcApwN/FBPPEWcOag/BEhXSvlgJEunrAB+46jPqpQKq2PfOjlifgD4vVLKBoQBmY4EbCLQ6RyxLAVuU0oFO+qNV0rF1FefEMK7SRImhHAJR2/UlcAUxxQVe4BnMU7ZxQBfK6V2AzuBauDVOop5CsgC9jq2/QYo1FqnY4yrWgXsALZorRfUE9JnwCNKqW1Kqa7AH4CNwI/AvlrbPQhMdJym3AL00VrnAD86LgI478B8rfU2x2uajXGadKijrJtO1XN2eVrr74BPgPWObefR9KtAhRBeQp3utRdCCCGEEO4iPWFCCCGEECaQJEwIIYQQwgSShAkhhBBCmECSMCGEEEIIE0gSJoQQQghhAknChBBCCCFMIEmYEEIIIYQJJAkTQgghhDDB/wdu2NXxUjPGWQAAAABJRU5ErkJggg==
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can quantify the effect that this added width of the sampling distribution has on the results of statistical calculations. In theory, we would expect an unlikely result ($\&gt;1.96 * \sigma$ from the mean) to occur 5% of the time. The calculation below shows that is indeed the case when we randomise on order. It is not however true when we randomise on users; in this case, a false positive is 5 times as common as what we would expect.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ci_theoretical</span> <span class="o">=</span> <span class="n">calculate_theoretical_ci</span><span class="p">(</span><span class="n">df_orders</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">)</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Percentage of Statistically Significant Results with Order-level Randomisation: </span><span class="si">{:.2f}</span><span class="s1">%&#39;</span><span class="o">.</span>
+   <span class="nb">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">calculate_unlikely_result</span><span class="p">(</span><span class="n">boot_orders</span><span class="p">,</span> <span class="n">ci_theoretical</span><span class="p">)))</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Percentage of Statistically Significant Results with User-level Randomisation: </span><span class="si">{:.2f}</span><span class="s1">%&#39;</span><span class="o">.</span>
+   <span class="nb">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">calculate_unlikely_result</span><span class="p">(</span><span class="n">boot_users</span><span class="p">,</span> <span class="n">ci_theoretical</span><span class="p">)))</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Percentage of Statistically Significant Results with Order-level Randomisation: 5.22%
+Percentage of Statistically Significant Results with User-level Randomisation: 24.88%
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h3><p>If uncorrected, using different units of analysis and diversion can lead to unreliable statistical results - this was demonstrated above using a quick simulation. Part 2 of this blog series will explore one way of addressing this issue.</p>
+<p>Some of the resources I found most useful include:</p>
+<ul>
+<li><a href="https://towardsdatascience.com/the-second-ghost-of-experimentation-the-fallacy-of-session-based-metrics-fb65006d30ff">The second Ghost of Experimentation: The fallacy of session based metrics</a></li>
+<li><a href="http://yukiyanai.github.io/teaching/rm1/contents/R/clustered-data-analysis.html">Analysis of Clustered Data</a></li>
+</ul>
+
+</div>
+</div>
+</div>
+ 
+
+
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['$','$'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        " linebreaks: { automatic: true, width: '95% container' }, " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+
+                <div class="clear"></div>
+
+                <div class="info">
+                    <a href="/clustered-sampling-part-1.html">posted at 00:00</a>
+                    &nbsp;&middot;&nbsp;<a href="/category/statistics-inference.html" rel="tag">Statistics, Inference</a>
+                    &nbsp;&middot;
+                    &nbsp;<a href="/tag/experimentation.html" class="tags">Experimentation</a>
+                </div>
+            </article>
+            <div class="clear"></div>
+            <footer>
+                <p>
+                <a href="https://github.com/jody-frankowski/blue-penguin">Blue Penguin</a> Theme
+                &middot;
+                Powered by <a href="http://getpelican.com">Pelican</a>
+            </footer>
+        </div>
+        <div class="clear"></div>
+    </div>
+</body>
+</html>
